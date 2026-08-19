@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner de Red Cardiovascular</title>
+    <style>
+        body { font-family: 'Courier New', Courier, monospace; background-color: #121212; color: #00ff00; padding: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        .question { background: #1e1e1e; padding: 15px; margin-bottom: 10px; border-radius: 5px; border-left: 4px solid #00ff00; }
+        button { background-color: #00ff00; color: #121212; border: none; padding: 15px; width: 100%; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; border-radius: 5px; }
+        button:hover { background-color: #00cc00; }
+        #resultado { display: none; margin-top: 20px; padding: 20px; text-align: center; border-radius: 5px; font-weight: bold; font-size: 1.2em; }
+        .estado-verde { background-color: #28a745; color: white; }
+        .estado-amarillo { background-color: #ffc107; color: black; }
+        .estado-rojo { background-color: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📡 DIAGNÓSTICO DE SISTEMA V1.0</h2>
+    <p>Seleccioná las fallas que detectes en tu rutina (Tildá si tu respuesta es SÍ):</p>
+
+    <form id="testForm">
+        <div class="question">
+            <label><input type="checkbox" class="falla"> 1. HARDWARE: Familiares directos con hipertensión.</label>
+        </div>
+        <div class="question">
+            <label><input type="checkbox" class="falla"> 2. COMBUSTIBLE: Más de 3 comidas rápidas/snacks por semana.</label>
+        </div>
+        <div class="question">
+            <label><input type="checkbox" class="falla"> 3. PICOS DE TENSIÓN: Alto nivel de estrés casi todos los días.</label>
+        </div>
+        <div class="question">
+            <label><input type="checkbox" class="falla"> 4. RUIDO EN LA LÍNEA: Fumo actualmente.</label>
+        </div>
+        <div class="question">
+            <label><input type="checkbox" class="falla"> 5. STAND-BY: No hago actividad física programada.</label>
+        </div>
+        
+        <button type="button" onclick="correrDiagnostico()">EJECUTAR ESCANEO</button>
+    </form>
+
+    <div id="resultado"></div>
+</div>
+
+<script>
+    function correrDiagnostico() {
+        // Contamos cuántos checkboxes están marcados
+        let fallasDetectadas = document.querySelectorAll('.falla:checked').length;
+        let divResultado = document.getElementById('resultado');
+        
+        divResultado.style.display = 'block';
+        divResultado.className = ''; // Limpiamos clases previas
+        
+        if (fallasDetectadas <= 1) {
+            divResultado.innerHTML = "✅ SISTEMA ESTABLE (" + fallasDetectadas + " fallas).<br><br>Red funcionando en parámetros normales. Mantenimiento sugerido: 1 vez al año.";
+            divResultado.classList.add('estado-verde');
+        } else if (fallasDetectadas <= 3) {
+            divResultado.innerHTML = "⚠️ ALERTA EN TABLERO (" + fallasDetectadas + " fallas).<br><br>Desgaste de piezas detectado. Calibrar hábitos. Mantenimiento sugerido: Cada 6 meses.";
+            divResultado.classList.add('estado-amarillo');
+        } else {
+            divResultado.innerHTML = "🚨 RIESGO DE CAÍDA DE SISTEMA (" + fallasDetectadas + " fallas).<br><br>Sobrecarga crítica. Requiere service preventivo urgente con un médico.";
+            divResultado.classList.add('estado-rojo');
+        }
+    }
+</script>
+
+</body>
+</html>
