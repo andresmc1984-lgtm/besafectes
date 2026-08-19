@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presión en la Red - Salud Ocupacional</title>
+    <style>
+        /* Estilos base: Modo oscuro, tipo consola/terminal */
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #0d1117; color: #58a6ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* Oculta el scroll para simular diapositivas */
+        }
+
+        /* Contenedor principal de las diapositivas */
+        .slide-container {
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Cada diapositiva (ocultas por defecto) */
+        .slide {
+            display: none;
+            width: 80%; max-width: 900px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* Diapositiva activa */
+        .slide.active { display: block; }
+
+        /* Tipografía y colores */
+        h1 { color: #3fb950; font-size: 3.5em; margin-bottom: 10px; }
+        h2 { color: #8b949e; font-size: 2.5em; border-bottom: 2px solid #30363d; padding-bottom: 10px; }
+        p, li { font-size: 1.5em; color: #c9d1d9; line-height: 1.6; text-align: left; }
+        ul { margin-left: 20px; }
+        
+        .highlight { color: #ff7b72; font-weight: bold; } /* Para alertas */
+        .qr-placeholder { border: 4px dashed #3fb950; padding: 50px; margin: 30px auto; width: 250px; color: #3fb950; font-weight: bold; }
+
+        /* Animación de transición */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Indicador de controles */
+        .controls { position: fixed; bottom: 20px; right: 20px; color: #8b949e; font-size: 1em; }
+    </style>
+</head>
+<body>
+
+    <div class="slide-container">
+        
+        <!-- SLIDE 1: Portada -->
+        <div class="slide active" id="slide-1">
+            <h1>Presión en la Red</h1>
+            <h2>Calibración del Sistema Cardiovascular</h2>
+            <p style="text-align: center;">Mantenimiento Preventivo para Técnicos de Telecomunicaciones</p>
+        </div>
+
+        <!-- SLIDE 2: Factores de Riesgo -->
+        <div class="slide" id="slide-2">
+            <h2>1. Vulnerabilidades del Sistema</h2>
+            <ul>
+                <li><strong>Configuración de Origen (Hardware):</strong> Genética y edad. No se modifican, se monitorean.</li>
+                <li><strong>Picos de Tensión:</strong> Estrés crónico por reclamos y tránsito.</li>
+                <li><strong>Corrosión de Línea:</strong> Exceso de <span class="highlight">sodio</span> en comidas rápidas de ruta.</li>
+                <li><strong>Ruido Constante:</strong> Tabaquismo (daña el cableado interno).</li>
+                <li><strong>Modo Stand-by:</strong> Sedentarismo al volante.</li>
+            </ul>
+        </div>
+
+        <!-- SLIDE 3: Presión Dinámica -->
+        <div class="slide" id="slide-3">
+            <h2>2. Tráfico Variable (Dinámica de Presión)</h2>
+            <p>La presión no es un número fijo, es como el ancho de banda:</p>
+            <ul>
+                <li><strong>Reposo (Madrugada):</strong> Tráfico mínimo, tensión baja.</li>
+                <li><strong>Demanda (Trabajo/Estrés):</strong> El cerebro pide más datos, el corazón bombea más fuerte. <span class="highlight">Pico normal.</span></li>
+                <li><strong>Falla Crítica:</strong> Cuando el sistema pierde la capacidad de volver a la tensión base al terminar la tarea.</li>
+            </ul>
+        </div>
+
+        <!-- SLIDE 4: Actividad Analógico vs Digital -->
+        <div class="slide" id="slide-4">
+            <h2>3. Calibrando Equipos (Demo en Vivo)</h2>
+            <p><strong>Benchmarking:</strong> Tensiómetro Aneroide vs. Digital.</p>
+            <ul>
+                <li>¿Cómo evitar interferencias en la medición?</li>
+                <li><strong>Aislar señal:</strong> 30 min sin café, tabaco ni energizantes.</li>
+                <li><strong>Bajar a tierra:</strong> Pies apoyados, vejiga vacía.</li>
+                <li><strong>Silencio en la línea:</strong> 5 min previos de reposo absoluto.</li>
+            </ul>
+        </div>
+
+        <!-- SLIDE 5: El QR interactivo -->
+        <div class="slide" id="slide-5">
+            <h2>4. Ejecutar Diagnóstico Interno</h2>
+            <p style="text-align: center;">Escaneen el código desde sus terminales para correr el test.</p>
+            <!-- REEMPLAZAR ESTE DIV POR LA IMAGEN DE TU QR -->
+            <div class="qr-placeholder">
+                [INSERTAR IMAGEN QR AQUÍ]<br>
+                Apunta a diagnostico.html
+            </div>
+        </div>
+
+        <!-- SLIDE 6: Cada cuánto controlarse -->
+        <div class="slide" id="slide-6">
+            <h2>5. SLA: Mantenimiento Preventivo</h2>
+            <ul>
+                <li><strong>Sistemas Estables (Test en Verde):</strong> Chequeo de rutina <span class="highlight">1 vez al año</span>. (Valores sub 13/8).</li>
+                <li><strong>Equipos en Alerta (Test Amarillo):</strong> Controles físicos y calibración de hábitos <span class="highlight">cada 6 meses</span>.</li>
+                <li><strong>Equipos Observados (Rojo / Antecedentes):</strong> Seguimiento estricto según protocolo de su médico particular.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="controls">Navegación: [←] [→] o Clic</div>
+
+    <script>
+        // Lógica simple para cambiar de diapositivas
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        // Eventos de teclado (Flechas)
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight' || event.key === ' ') nextSlide();
+            if (event.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Eventos de clic (Click izquierdo avanza)
+        document.addEventListener('click', nextSlide);
+    </script>
+
+</body>
+</html>
