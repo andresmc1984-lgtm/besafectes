@@ -3,153 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presión en la Red - Salud Ocupacional</title>
+    <title>Card con Botones Modernos</title>
     <style>
-        /* Estilos base: Modo oscuro, tipo consola/terminal */
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #0d1117; color: #58a6ff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden; /* Oculta el scroll para simular diapositivas */
+        /* Fondo azul marino y centrado de la card */
+        body {
+            background-color: #0b132b; /* Azul marino moderno */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* Contenedor principal de las diapositivas */
-        .slide-container {
-            width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
+        /* Estilo de la Card */
+        .card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Sombra para dar profundidad */
+            width: 100%;
+            max-width: 500px;
         }
 
-        /* Cada diapositiva (ocultas por defecto) */
-        .slide {
-            display: none;
-            width: 80%; max-width: 900px;
+        .card-title {
             text-align: center;
-            animation: fadeIn 0.5s ease-in-out;
+            color: #1c1c1c;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
         }
 
-        /* Diapositiva activa */
-        .slide.active { display: block; }
+        /* Grid para organizar los 8 botones (2 columnas x 4 filas) */
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px; 
+        }
 
-        /* Tipografía y colores */
-        h1 { color: #3fb950; font-size: 3.5em; margin-bottom: 10px; }
-        h2 { color: #8b949e; font-size: 2.5em; border-bottom: 2px solid #30363d; padding-bottom: 10px; }
-        p, li { font-size: 1.5em; color: #c9d1d9; line-height: 1.6; text-align: left; }
-        ul { margin-left: 20px; }
-        
-        .highlight { color: #ff7b72; font-weight: bold; } /* Para alertas */
-        .qr-placeholder { border: 4px dashed #3fb950; padding: 50px; margin: 30px auto; width: 250px; color: #3fb950; font-weight: bold; }
+        /* Estilos modernos para los botones */
+        .btn {
+            background-color: #1c2541; /* Azul un poco más claro para el botón */
+            color: #ffffff;
+            border: none;
+            border-radius: 8px; /* Bordes redondeados */
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none; /* Quita el subrayado de los enlaces */
+            transition: all 0.3s ease; /* Transición suave para los efectos */
+            display: inline-block;
+        }
 
-        /* Animación de transición */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* Efecto al pasar el cursor (Hover) */
+        .btn:hover {
+            background-color: #3a506b;
+            transform: translateY(-3px); /* Eleva el botón ligeramente */
+            box-shadow: 0 6px 15px rgba(58, 80, 107, 0.4);
+            color: #ffffff; 
+        }
 
-        /* Indicador de controles */
-        .controls { position: fixed; bottom: 20px; right: 20px; color: #8b949e; font-size: 1em; }
+        /* Efecto al hacer clic (Active) */
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(58, 80, 107, 0.4);
+        }
     </style>
 </head>
 <body>
 
-    <div class="slide-container">
+    <div class="card">
+        <h2 class="card-title">Panel de Control</h2>
         
-        <!-- SLIDE 1: Portada -->
-        <div class="slide active" id="slide-1">
-            <h1>Presión en la Red</h1>
-            <h2>Calibración del Sistema Cardiovascular</h2>
-            <p style="text-align: center;">Mantenimiento Preventivo para Técnicos de Telecomunicaciones</p>
+        <div class="button-container">
+            <a href="otra-pagina.html" class="btn">Ir a otra página</a>
+            
+            <button type="button" class="btn">Botón 2</button>
+            <button type="button" class="btn">Botón 3</button>
+            <button type="button" class="btn">Botón 4</button>
+            <button type="button" class="btn">Botón 5</button>
+            <button type="button" class="btn">Botón 6</button>
+            <button type="button" class="btn">Botón 7</button>
+            <button type="button" class="btn">Botón 8</button>
         </div>
-
-        <!-- SLIDE 2: Factores de Riesgo -->
-        <div class="slide" id="slide-2">
-            <h2>1. Vulnerabilidades del Sistema</h2>
-            <ul>
-                <li><strong>Configuración de Origen (Hardware):</strong> Genética y edad. No se modifican, se monitorean.</li>
-                <li><strong>Picos de Tensión:</strong> Estrés crónico por reclamos y tránsito.</li>
-                <li><strong>Corrosión de Línea:</strong> Exceso de <span class="highlight">sodio</span> en comidas rápidas de ruta.</li>
-                <li><strong>Ruido Constante:</strong> Tabaquismo (daña el cableado interno).</li>
-                <li><strong>Modo Stand-by:</strong> Sedentarismo al volante.</li>
-            </ul>
-        </div>
-
-        <!-- SLIDE 3: Presión Dinámica -->
-        <div class="slide" id="slide-3">
-            <h2>2. Tráfico Variable (Dinámica de Presión)</h2>
-            <p>La presión no es un número fijo, es como el ancho de banda:</p>
-            <ul>
-                <li><strong>Reposo (Madrugada):</strong> Tráfico mínimo, tensión baja.</li>
-                <li><strong>Demanda (Trabajo/Estrés):</strong> El cerebro pide más datos, el corazón bombea más fuerte. <span class="highlight">Pico normal.</span></li>
-                <li><strong>Falla Crítica:</strong> Cuando el sistema pierde la capacidad de volver a la tensión base al terminar la tarea.</li>
-            </ul>
-        </div>
-
-        <!-- SLIDE 4: Actividad Analógico vs Digital -->
-        <div class="slide" id="slide-4">
-            <h2>3. Calibrando Equipos (Demo en Vivo)</h2>
-            <p><strong>Benchmarking:</strong> Tensiómetro Aneroide vs. Digital.</p>
-            <ul>
-                <li>¿Cómo evitar interferencias en la medición?</li>
-                <li><strong>Aislar señal:</strong> 30 min sin café, tabaco ni energizantes.</li>
-                <li><strong>Bajar a tierra:</strong> Pies apoyados, vejiga vacía.</li>
-                <li><strong>Silencio en la línea:</strong> 5 min previos de reposo absoluto.</li>
-            </ul>
-        </div>
-
-        <!-- SLIDE 5: El QR interactivo -->
-        <div class="slide" id="slide-5">
-            <h2>4. Ejecutar Diagnóstico Interno</h2>
-            <p style="text-align: center;">Escaneen el código desde sus terminales para correr el test.</p>
-            <!-- REEMPLAZAR ESTE DIV POR LA IMAGEN DE TU QR -->
-            <div class="qr-placeholder">
-                [INSERTAR IMAGEN QR AQUÍ]<br>
-                Apunta a diagnostico.html
-            </div>
-        </div>
-
-        <!-- SLIDE 6: Cada cuánto controlarse -->
-        <div class="slide" id="slide-6">
-            <h2>5. SLA: Mantenimiento Preventivo</h2>
-            <ul>
-                <li><strong>Sistemas Estables (Test en Verde):</strong> Chequeo de rutina <span class="highlight">1 vez al año</span>. (Valores sub 13/8).</li>
-                <li><strong>Equipos en Alerta (Test Amarillo):</strong> Controles físicos y calibración de hábitos <span class="highlight">cada 6 meses</span>.</li>
-                <li><strong>Equipos Observados (Rojo / Antecedentes):</strong> Seguimiento estricto según protocolo de su médico particular.</li>
-            </ul>
-        </div>
-
     </div>
-
-    <div class="controls">Navegación: [←] [→] o Clic</div>
-
-    <script>
-        // Lógica simple para cambiar de diapositivas
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-
-        function showSlide(index) {
-            slides.forEach(slide => slide.classList.remove('active'));
-            slides[index].classList.add('active');
-        }
-
-        function nextSlide() {
-            if (currentSlide < slides.length - 1) {
-                currentSlide++;
-                showSlide(currentSlide);
-            }
-        }
-
-        function prevSlide() {
-            if (currentSlide > 0) {
-                currentSlide--;
-                showSlide(currentSlide);
-            }
-        }
-
-        // Eventos de teclado (Flechas)
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowRight' || event.key === ' ') nextSlide();
-            if (event.key === 'ArrowLeft') prevSlide();
-        });
-
-        // Eventos de clic (Click izquierdo avanza)
-        document.addEventListener('click', nextSlide);
-    </script>
 
 </body>
 </html>
