@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <title>Desafío: Animales Ponzoñosos</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 { color: #d32f2f; }
+        .question {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 1em;
+            cursor: pointer;
+            border: 2px solid #00796b;
+            background-color: white;
+            color: #00796b;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .btn:hover {
+            background-color: #00796b;
+            color: white;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .correct { color: green; }
+        .incorrect { color: red; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🚨 Expo Salud: Prevención 🚨</h1>
+    <p>Trabajen en equipo. ¿Qué harían en esta situación?</p>
+    
+    <div id="quiz-container">
+        <div class="question" id="question-text">Pregunta de carga...</div>
+        <div id="options-container"></div>
+    </div>
+    
+    <div id="result"></div>
+    <button class="btn" id="next-btn" style="display:none; background-color: #d32f2f; color: white; border: none;">Siguiente Pregunta</button>
+</div>
+
+<script>
+    const questions = [
+        {
+            question: "¿En qué lugar de la casa es más común encontrar a la peligrosa Araña de los Rincones?",
+            options: ["En el pasto al sol", "Detrás de cuadros y lugares oscuros y secos", "Nadando en la pileta"],
+            correct: 1
+        },
+        {
+            question: "Vas a ponerte las zapatillas que quedaron en el patio. ¿Qué es lo primero que debes hacer?",
+            options: ["Ponérmelas rápido", "Sacudirlas y revisarlas antes de usarlas", "Lavarlas con agua hirviendo"],
+            correct: 1
+        },
+        {
+            question: "Alguien fue picado por un alacrán. ¿Qué hacemos de inmediato?",
+            options: ["Aplicar hielo y llevar urgente al hospital/centro de salud", "Cortar la herida para que salga la sangre", "Darle a beber leche"],
+            correct: 0
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const resultElement = document.getElementById('result');
+    const nextBtn = document.getElementById('next-btn');
+
+    function loadQuestion() {
+        resultElement.innerHTML = "";
+        nextBtn.style.display = "none";
+        optionsContainer.innerHTML = "";
+        
+        const q = questions[currentQuestionIndex];
+        questionText.innerText = q.question;
+
+        q.options.forEach((opt, index) => {
+            const button = document.createElement('button');
+            button.innerText = opt;
+            button.classList.add('btn');
+            button.onclick = () => checkAnswer(index);
+            optionsContainer.appendChild(button);
+        });
+    }
+
+    function checkAnswer(selectedIndex) {
+        const correctIndex = questions[currentQuestionIndex].correct;
+        const buttons = optionsContainer.querySelectorAll('.btn');
+        
+        buttons.forEach(btn => btn.disabled = true); // Disable after guess
+
+        if (selectedIndex === correctIndex) {
+            resultElement.innerHTML = "<span class='correct'>¡Correcto! Excelente decisión.</span>";
+            score++;
+        } else {
+            resultElement.innerHTML = "<span class='incorrect'>¡Cuidado! Esa acción es peligrosa.</span>";
+            buttons[correctIndex].style.backgroundColor = "#c8e6c9"; // Highlight correct
+        }
+
+        nextBtn.style.display = "block";
+    }
+
+    nextBtn.onclick = () => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            questionText.innerText = "¡Desafío completado!";
+            optionsContainer.innerHTML = `<h3>Acertaron ${score} de ${questions.length} situaciones.</h3><p>¡Gracias por participar y cuidarse!</p>`;
+            nextBtn.innerText = "Volver a jugar";
+            nextBtn.onclick = () => {
+                currentQuestionIndex = 0;
+                score = 0;
+                loadQuestion();
+            };
+        }
+    };
+
+    // Iniciar el juego
+    loadQuestion();
+</script>
+
+</body>
+</html>
