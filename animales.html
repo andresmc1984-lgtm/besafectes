@@ -3,149 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-width=1.0">
-    <title>Desafío: Animales Ponzoñosos</title>
+    <title>Juego: Escape del Galpón</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #2c3e50;
+            color: white;
             text-align: center;
             padding: 20px;
         }
-        .container {
-            background-color: white;
-            border-radius: 10px;
-            padding: 30px;
+        .game-container {
+            background-color: #34495e;
+            border-radius: 15px;
+            padding: 20px;
             max-width: 600px;
             margin: 0 auto;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
         }
-        h1 { color: #d32f2f; }
-        .question {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            font-size: 1em;
-            cursor: pointer;
-            border: 2px solid #00796b;
-            background-color: white;
-            color: #00796b;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-        .btn:hover {
-            background-color: #00796b;
-            color: white;
-        }
-        #result {
+        h1 { color: #f1c40f; margin-bottom: 5px;}
+        #timer { font-size: 2em; color: #e74c3c; font-weight: bold; margin: 10px 0; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
             margin-top: 20px;
-            font-size: 1.2em;
-            font-weight: bold;
         }
-        .correct { color: green; }
-        .incorrect { color: red; }
+        .item {
+            background-color: #ecf0f1;
+            font-size: 3em;
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.2s;
+        }
+        .item:hover { transform: scale(1.05); }
+        .hidden-animal { font-size: 0.5em; display: block; margin-top: 10px; }
+        #message { font-size: 1.2em; margin-top: 20px; min-height: 30px; color: #2ecc71;}
+        .btn-start {
+            background-color: #f1c40f; color: #2c3e50; border: none;
+            padding: 15px 30px; font-size: 1.2em; font-weight: bold;
+            border-radius: 5px; cursor: pointer; margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🚨 Expo Salud: Prevención 🚨</h1>
-    <p>Trabajen en equipo. ¿Qué harían en esta situación?</p>
+<div class="game-container">
+    <h1>🔦 El Galpón del Peligro</h1>
+    <p>¡Tienes 20 segundos para encontrar los 3 escondites peligrosos tocando los objetos!</p>
     
-    <div id="quiz-container">
-        <div class="question" id="question-text">Pregunta de carga...</div>
-        <div id="options-container"></div>
+    <div id="timer">20</div>
+    <div id="message">Toca "Empezar" cuando el equipo esté listo.</div>
+    
+    <button class="btn-start" id="startBtn" onclick="startGame()">¡Empezar a Buscar!</button>
+
+    <div class="grid" id="grid" style="display:none;">
+        <div class="item" onclick="checkItem(this, false, '¡Mesa limpia! Zona segura.')">🪑</div>
+        <div class="item" onclick="checkItem(this, true, '¡CUIDADO! Un alacrán en la zapatilla. 🦂')">👟</div>
+        <div class="item" onclick="checkItem(this, false, 'Solo es una maceta vacía.')">🪴</div>
+        <div class="item" onclick="checkItem(this, true, '¡ALERTA! Araña de los rincones en la ropa tirada. 🕷️')">👕</div>
+        <div class="item" onclick="checkItem(this, false, 'Herramientas seguras.')">🔨</div>
+        <div class="item" onclick="checkItem(this, true, '¡PELIGRO! Una yarará entre los escombros. 🐍')">🧱</div>
     </div>
-    
-    <div id="result"></div>
-    <button class="btn" id="next-btn" style="display:none; background-color: #d32f2f; color: white; border: none;">Siguiente Pregunta</button>
 </div>
 
 <script>
-    const questions = [
-        {
-            question: "¿En qué lugar de la casa es más común encontrar a la peligrosa Araña de los Rincones?",
-            options: ["En el pasto al sol", "Detrás de cuadros y lugares oscuros y secos", "Nadando en la pileta"],
-            correct: 1
-        },
-        {
-            question: "Vas a ponerte las zapatillas que quedaron en el patio. ¿Qué es lo primero que debes hacer?",
-            options: ["Ponérmelas rápido", "Sacudirlas y revisarlas antes de usarlas", "Lavarlas con agua hirviendo"],
-            correct: 1
-        },
-        {
-            question: "Alguien fue picado por un alacrán. ¿Qué hacemos de inmediato?",
-            options: ["Aplicar hielo y llevar urgente al hospital/centro de salud", "Cortar la herida para que salga la sangre", "Darle a beber leche"],
-            correct: 0
-        }
-    ];
+    let timeLeft = 20;
+    let timerId;
+    let found = 0;
+    let isPlaying = false;
 
-    let currentQuestionIndex = 0;
-    let score = 0;
-
-    const questionText = document.getElementById('question-text');
-    const optionsContainer = document.getElementById('options-container');
-    const resultElement = document.getElementById('result');
-    const nextBtn = document.getElementById('next-btn');
-
-    function loadQuestion() {
-        resultElement.innerHTML = "";
-        nextBtn.style.display = "none";
-        optionsContainer.innerHTML = "";
+    function startGame() {
+        timeLeft = 20;
+        found = 0;
+        isPlaying = true;
+        document.getElementById('timer').innerText = timeLeft;
+        document.getElementById('startBtn').style.display = 'none';
+        document.getElementById('grid').style.display = 'grid';
+        document.getElementById('message').innerText = "¡Buscando!";
+        document.getElementById('message').style.color = "#f1c40f";
         
-        const q = questions[currentQuestionIndex];
-        questionText.innerText = q.question;
-
-        q.options.forEach((opt, index) => {
-            const button = document.createElement('button');
-            button.innerText = opt;
-            button.classList.add('btn');
-            button.onclick = () => checkAnswer(index);
-            optionsContainer.appendChild(button);
+        // Reset items
+        const items = document.querySelectorAll('.item');
+        items.forEach(item => {
+            item.style.backgroundColor = "#ecf0f1";
+            item.style.pointerEvents = "auto";
+            if(item.querySelector('.hidden-animal')) {
+                item.querySelector('.hidden-animal').remove();
+            }
         });
+
+        timerId = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer').innerText = timeLeft;
+            if (timeLeft <= 0) endGame(false);
+        }, 1000);
     }
 
-    function checkAnswer(selectedIndex) {
-        const correctIndex = questions[currentQuestionIndex].correct;
-        const buttons = optionsContainer.querySelectorAll('.btn');
+    function checkItem(element, isDanger, msg) {
+        if (!isPlaying) return;
         
-        buttons.forEach(btn => btn.disabled = true); // Disable after guess
+        document.getElementById('message').innerText = msg;
+        element.style.pointerEvents = "none"; // Disable clicking again
 
-        if (selectedIndex === correctIndex) {
-            resultElement.innerHTML = "<span class='correct'>¡Correcto! Excelente decisión.</span>";
-            score++;
+        if (isDanger) {
+            element.style.backgroundColor = "#e74c3c";
+            found++;
+            if (found === 3) {
+                endGame(true);
+            }
         } else {
-            resultElement.innerHTML = "<span class='incorrect'>¡Cuidado! Esa acción es peligrosa.</span>";
-            buttons[correctIndex].style.backgroundColor = "#c8e6c9"; // Highlight correct
+            element.style.backgroundColor = "#95a5a6";
         }
-
-        nextBtn.style.display = "block";
     }
 
-    nextBtn.onclick = () => {
-        currentQuestionIndex++;
-        if (currentQuestionIndex < questions.length) {
-            loadQuestion();
+    function endGame(win) {
+        isPlaying = false;
+        clearInterval(timerId);
+        const msgEl = document.getElementById('message');
+        if (win) {
+            msgEl.innerText = "¡GANARON! Encontraron todos los peligros a tiempo. 🎉";
+            msgEl.style.color = "#2ecc71";
         } else {
-            questionText.innerText = "¡Desafío completado!";
-            optionsContainer.innerHTML = `<h3>Acertaron ${score} de ${questions.length} situaciones.</h3><p>¡Gracias por participar y cuidarse!</p>`;
-            nextBtn.innerText = "Volver a jugar";
-            nextBtn.onclick = () => {
-                currentQuestionIndex = 0;
-                score = 0;
-                loadQuestion();
-            };
+            msgEl.innerText = "¡TIEMPO AGOTADO! Los animales los sorprendieron. 💀";
+            msgEl.style.color = "#e74c3c";
         }
-    };
-
-    // Iniciar el juego
-    loadQuestion();
+        document.getElementById('startBtn').innerText = "Jugar de nuevo";
+        document.getElementById('startBtn').style.display = 'inline-block';
+    }
 </script>
 
 </body>
