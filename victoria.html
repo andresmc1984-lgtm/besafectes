@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Escape Room - ¡Victoria!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="door-container" style="box-shadow: 0 0 40px rgba(100, 255, 218, 0.6);">
+        <h2 style="font-size: 2.5rem;">SISTEMA VULNERADO</h2>
+        <p>¡Felicidades! Has logrado descifrar todos los códigos y escapar antes de que el protocolo de seguridad te detectara.</p>
+        
+        <h1 style="color: #64ffda; font-size: 3.5rem; margin: 20px 0 10px 0; letter-spacing: 5px;">¡ESCAPASTE!</h1>
+        
+        <!-- Aquí mostraremos el tiempo dinámicamente -->
+        <h3 id="time-display" style="color: #e6f1ff; font-size: 1.5rem; margin-bottom: 30px;">
+            TIEMPO DE HACKEO: Calculando...
+        </h3>
+        
+        <button onclick="reiniciarJuego()">VOLVER A JUGAR</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const timeLimit = 15 * 60; // 15 minutos en segundos (900s)
+            let timeLeft = localStorage.getItem("escapeTimeLeft");
+
+            if (timeLeft) {
+                // Calculamos cuánto tiempo gastó el jugador
+                let timeSpent = timeLimit - parseInt(timeLeft);
+                
+                let minutes = Math.floor(timeSpent / 60);
+                let seconds = timeSpent % 60;
+                
+                // Formateamos para que siempre muestre dos dígitos en los segundos (ej: 05 en vez de 5)
+                let formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+                
+                document.getElementById("time-display").innerText = `TIEMPO DE HACKEO: ${minutes}:${formattedSeconds}`;
+            }
+
+            // Una vez mostrado el tiempo, limpiamos la memoria para la próxima partida
+            localStorage.removeItem("escapeTimeLeft");
+        });
+
+        function reiniciarJuego() {
+            window.location.href = "start.html"; // Lo enviamos a la pantalla de inicio
+        }
+    </script>
+</body>
+</html>

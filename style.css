@@ -1,0 +1,172 @@
+/* Importamos la fuente Orbitron desde Google Fonts (estilo monitor/pulso digital) */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+body {
+    /* Degradado de azul marino claro en el centro a azul profundo en los bordes */
+    background: radial-gradient(circle at center, #1a365d 0%, #0a192f 100%);
+    color: #e6f1ff;
+    font-family: 'Orbitron', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+#timer-container {
+    position: absolute;
+    top: 20px;
+    font-size: 2rem;
+    border: 2px solid #64ffda;
+    padding: 10px 20px;
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.4);
+    border-radius: 5px;
+    background: rgba(10, 25, 47, 0.8);
+    color: #64ffda;
+    font-weight: 700; 
+    letter-spacing: 2px; 
+}
+
+/* Simulación de puerta/celda con láseres de fondo */
+.door-container {
+    position: relative;
+    text-align: center;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    max-width: 600px;
+    width: 90%;
+    /* Combinación del fondo oscuro base con el patrón de láseres */
+    background: 
+        linear-gradient(rgba(17, 34, 64, 0.95), rgba(17, 34, 64, 0.95)), 
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 48px,
+            rgba(100, 255, 218, 0.15) 50px
+        );
+    border: 2px solid #64ffda;
+}
+
+h2 {
+    color: #64ffda;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Diseño general para inputs de texto convencionales (por si los usas en otras puertas) */
+input[type="text"] {
+    background: #0a192f;
+    border: 1px solid #64ffda;
+    color: #64ffda;
+    padding: 15px;
+    font-size: 1.2rem;
+    font-family: 'Orbitron', sans-serif;
+    width: 80%;
+    margin: 20px 0;
+    outline: none;
+    border-radius: 4px;
+}
+
+input[type="text"]::placeholder {
+    color: rgba(100, 255, 218, 0.4);
+}
+
+button {
+    background: transparent;
+    color: #64ffda;
+    border: 2px solid #64ffda;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+button:hover {
+    background: rgba(100, 255, 218, 0.1);
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.4);
+}
+
+.error {
+    color: #ff6b6b; /* Rojo coral */
+    display: none;
+    margin-top: 10px;
+    font-weight: 700;
+}
+
+/* Efecto de temblor al equivocarse */
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+}
+.shake { animation: shake 0.4s ease-in-out; }
+
+/* Contenedor para multimedia (videos, imágenes) */
+.media-puzzle { 
+    max-width: 100%; 
+    border: 2px solid #233554; 
+    border-radius: 5px; 
+    margin: 15px 0; 
+}
+
+
+/* =========================================
+   ESTILOS ESPECÍFICOS: CAJAS DE LETRAS 
+   ========================================= */
+
+/* Contenedor de las letras */
+#letter-slots {
+    display: flex;
+    flex-direction: row; 
+    justify-content: center;
+    align-items: center;
+    gap: 8px; 
+    margin: 25px 0;
+    flex-wrap: wrap; 
+}
+
+/* Cada cuadrito de letra (con alta prioridad para no heredar estilos globales) */
+#letter-slots input[type="text"].letter-input {
+    width: 45px !important;  
+    height: 55px !important; 
+    padding: 0 !important;   
+    margin: 0 !important;
+    font-size: 1.8rem;
+    text-align: center;
+    background: #0a192f;
+    border: 2px solid #233554;
+    color: #e6f1ff;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    border-radius: 5px;
+    outline: none;
+    transition: all 0.3s;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Efecto al seleccionar la caja */
+#letter-slots input[type="text"].letter-input:focus {
+    border-color: #64ffda;
+    box-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
+    transform: scale(1.1);
+}
+
+/* Letra correcta (Fijada) */
+#letter-slots input[type="text"].letter-input.correct {
+    border-color: #64ffda;
+    color: #0a192f;
+    background: #64ffda;
+    font-weight: 900;
+    pointer-events: none;
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.4);
+}

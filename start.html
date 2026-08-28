@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Escape Room - Inicio</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Un pequeño efecto de parpadeo para el título principal */
+        @keyframes pulse-text {
+            0% { opacity: 1; text-shadow: 0 0 10px #64ffda; }
+            50% { opacity: 0.7; text-shadow: 0 0 20px #64ffda, 0 0 30px #64ffda; }
+            100% { opacity: 1; text-shadow: 0 0 10px #64ffda; }
+        }
+        .title-glitch {
+            font-size: 2.5rem;
+            animation: pulse-text 2s infinite;
+            margin-bottom: 10px;
+        }
+        .briefing {
+            text-align: left;
+            background: rgba(10, 25, 47, 0.8);
+            padding: 20px;
+            border: 1px solid #233554;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="door-container">
+        <h1 class="title-glitch" style="color: #64ffda;">PROYECTO: ENIGMA</h1>
+        <h2>PROTOCOLO DE INFILTRACIÓN</h2>
+        
+        <div class="briefing">
+            <p>> <strong>OBJETIVO:</strong> Vulnerar el servidor principal y escapar sin ser detectado.</p>
+            <p>> <strong>OBSTÁCULOS:</strong> 10 barreras de seguridad (Puertas lógicas, cifrados y análisis visual).</p>
+            <p>> <strong>TIEMPO ESTIMADO:</strong> 15 Minutos.</p>
+            <br>
+            <p style="color: #ff6b6b; text-align: center; font-weight: 700;">ADVERTENCIA: Si el contador llega a cero, el sistema bloqueará tu conexión permanentemente.</p>
+        </div>
+        
+        <button onclick="iniciarMision()" style="font-size: 1.5rem; padding: 20px 40px; margin-top: 10px;">INICIAR HACKEO</button>
+    </div>
+
+    <script>
+        // Nos aseguramos de que el reloj siempre esté limpio antes de empezar
+        function iniciarMision() {
+            localStorage.removeItem("escapeTimeLeft"); // Resetea el tiempo a 15 min
+            window.location.href = "puerta1.html";     // Envía a la primera puerta
+        }
+    </script>
+</body>
+</html>

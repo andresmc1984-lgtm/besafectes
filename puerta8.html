@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape Room - Puerta X</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="timer-container">Tiempo Restante: <span id="timer">--:--</span></div>
+    
+    <div class="door-container">
+        <h2>PUERTA 03: Sistema Binario</h2>
+<p>Si 0101 es 5, y 1010 es 10... ¿Qué número abre esta puerta si el código es 1111?</p>
+<input type="text" id="answerInput" placeholder="Número decimal..." autocomplete="off">
+<button onclick="checkAnswer('15', 'puerta9.html')">ABRIR PUERTA</button>
+<p class="error" id="errorMessage">Error de compilación en tu cerebro.</p>
+        </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
