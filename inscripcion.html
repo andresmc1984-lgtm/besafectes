@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto-Acreditación al Evento</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+  <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 sm:p-8">
+    <div class="text-center mb-6">
+      <div class="inline-flex items-center justify-center w-14 h-14 bg-blue-100 text-blue-600 rounded-full mb-3">
+        <!-- Icono de Credencial/Check -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-gray-800">Auto-Acreditación</h1>
+      <p class="text-gray-500 text-sm mt-1">Ingresa tu número de legajo para validar tu ingreso al evento</p>
+    </div>
+
+    <form id="formValidacion" class="space-y-4">
+      <div>
+        <label for="legajo" class="block text-sm font-medium text-gray-700 mb-1">Número de Legajo</label>
+        <input 
+          type="text" 
+          inputmode="numeric" 
+          id="legajo" 
+          name="legajo" 
+          required 
+          placeholder="Ej: 12345"
+          class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-lg text-center font-semibold text-gray-700 tracking-wider"
+          autocomplete="off"
+          autofocus
+        >
+      </div>
+
+      <button 
+        type="submit" 
+        id="btnSubmit"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2 shadow-md hover:shadow-lg"
+      >
+        <span id="btnText">Validar Ingreso</span>
+        <div id="btnSpinner" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+      </button>
+    </form>
+
+    <!-- Caja de mensajes de estado -->
+    <div id="resultado" class="hidden mt-6 p-4 rounded-lg text-center text-sm font-medium"></div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbycIYGlKR9bSqL7sCNfC9DCVSDjRUVhNc53Z8qvzb3xZ3LSRXwStbVSibPho9gkYt9_Eg/exec";
+
+    const form = document.getElementById("formValidacion");
+    const inputLegajo = document.getElementById("legajo");
+    const btnSubmit = document.getElementById("btnSubmit");
+    const btnText = document.getElementById("btnText");
+    const btnSpinner = document.getElementById("btnSpinner");
+    const resultado = document.getElementById("resultado");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const legajo = inputLegajo.value.trim();
+      if (!legajo) return;
+
+      setLoading(true);
+      resultado.className = "hidden";
+
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "text/plain;charset=utf-8" 
+          },
+          body: JSON.stringify({ legajo: legajo }),
+          redirect: "follow"
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+          const detalle = data.nombre ? `Bienvenido/a <strong>${data.nombre}</strong>` : "";
+          mostrarMensaje("success", `¡Registro realizado con éxito! ${detalle}`);
+          inputLegajo.value = "";
+        } else if (data.status === "already_registered") {
+          const detalle = data.nombre ? `(${data.nombre})` : "";
+          mostrarMensaje("warning", `Aviso: ${data.message} ${detalle}`);
+        } else {
+          mostrarMensaje("error", data.message || "Legajo no encontrado en el padrón.");
+        }
+
+      } catch (err) {
+        mostrarMensaje("error", "Error de conexión o configuración. Intenta nuevamente.");
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    function setLoading(isLoading) {
+      btnSubmit.disabled = isLoading;
+      if (isLoading) {
+        btnText.textContent = "Verificando...";
+        btnSpinner.classList.remove("hidden");
+        btnSubmit.classList.add("opacity-75", "cursor-not-allowed");
+      } else {
+        btnText.textContent = "Validar Ingreso";
+        btnSpinner.classList.add("hidden");
+        btnSubmit.classList.remove("opacity-75", "cursor-not-allowed");
+      }
+    }
+
+    function mostrarMensaje(tipo, textoHtml) {
+      resultado.classList.remove("hidden");
+      if (tipo === "success") {
+        resultado.className = "mt-6 p-4 rounded-lg text-center font-medium bg-green-100 text-green-800 border border-green-200";
+      } else if (tipo === "warning") {
+        resultado.className = "mt-6 p-4 rounded-lg text-center font-medium bg-yellow-100 text-yellow-800 border border-yellow-200";
+      } else {
+        resultado.className = "mt-6 p-4 rounded-lg text-center font-medium bg-red-100 text-red-800 border border-red-200";
+      }
+      resultado.innerHTML = textoHtml;
+    }
+  </script>
+</body>
+</html>
