@@ -3,20 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escape Room - Puerta X</title>
+    <title>Escape Room - Puerta 3</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="timer-container">Tiempo Restante: <span id="timer">--:--</span></div>
+    <div id="timer-container"><span id="timer">--:--</span></div>
     
     <div class="door-container">
-        <h2>PUERTA: Primeros Auxilios</h2>
+        <h2>PUERTA 03: Primeros Auxilios</h2>
         <p>¿Qué acción debemos realizar ante una sospecha de fractura?</p>
-        <input type="text" id="answerInput" placeholder="Escribe tu respuesta..." autocomplete="off">
-        <button onclick="checkAnswer('inmovilizar', 'puerta5.html')">ABRIR PUERTA</button>
-        <p class="error" id="errorMessage">Respuesta incorrecta. Inténtalo de nuevo.</p>
+        
+        <div id="letter-slots"></div>
+        
+        <button onclick="checkCurrentPuzzle()">HACKEAR CERRADURA</button>
+        <p class="error" id="errorMessage">Letras incorrectas borradas. Intenta de nuevo.</p>
     </div>
 
     <script src="game.js"></script>
+    <script>
+        // Inicializa el puzzle: Palabra a adivinar y a qué puerta va si gana
+        document.addEventListener("DOMContentLoaded", () => {
+            initPuzzle("inmovilizar", "puerta4.html");
+        });
+    </script>
 </body>
 </html>
