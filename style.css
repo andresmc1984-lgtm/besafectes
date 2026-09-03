@@ -127,12 +127,12 @@ button:hover {
 /* Contenedor de las letras */
 #letter-slots {
     display: flex;
-    flex-direction: row; 
     justify-content: center;
     align-items: center;
-    gap: 8px; 
-    margin: 25px 0;
-    flex-wrap: wrap; 
+    flex-wrap: nowrap; /* ¡Esta es la clave! Evita que salten a la siguiente línea */
+    gap: 5px; /* Espacio entre cada cuadrito */
+    width: 100%;
+    max-width: 100%;
 }
 
 /* Cada cuadrito de letra (con alta prioridad para no heredar estilos globales) */
