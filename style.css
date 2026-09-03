@@ -124,15 +124,17 @@ button:hover {
    ESTILOS ESPECÍFICOS: CAJAS DE LETRAS 
    ========================================= */
 
-/* Contenedor de las letras */
 #letter-slots {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-wrap: nowrap; /* ¡Esta es la clave! Evita que salten a la siguiente línea */
-    gap: 5px; /* Espacio entre cada cuadrito */
+    flex-wrap: nowrap;
+    gap: 5px;
     width: 100%;
     max-width: 100%;
+    
+    /* Agrega esta línea para empujar el botón hacia abajo: */
+    margin-bottom: 40px; 
 }
 
 /* Cada cuadrito de letra (con alta prioridad para no heredar estilos globales) */
