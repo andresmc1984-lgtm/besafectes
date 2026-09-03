@@ -2,21 +2,32 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escape Room - Puerta X</title>
+    <title>Escape Room - Puerta 1</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="timer-container">Tiempo Restante: <span id="timer">--:--</span></div>
+    <div id="timer-container"><span id="timer">--:--</span></div>
     
     <div class="door-container">
-        <h2>PUERTA 03: Sistema Binario</h2>
-<p>Si 0101 es 5, y 1010 es 10... ¿Qué número abre esta puerta si el código es 1111?</p>
-<input type="text" id="answerInput" placeholder="Número decimal..." autocomplete="off">
-<button onclick="checkAnswer('15', 'puerta9.html')">ABRIR PUERTA</button>
-<p class="error" id="errorMessage">Error de compilación en tu cerebro.</p>
-        </div>
+        <h2>PUERTA 01: Prevención y Seguridad</h2>
+        
+        <!-- Nueva pregunta -->
+        <p>Después de realizar los desafíos con las gafas, ¿qué debemos evitar ante el consumo de sustancias o la fatiga?</p>
+        
+        <!-- Aquí se generarán las cajas dinámicamente -->
+        <div id="letter-slots"></div>
+        
+        <button onclick="checkCurrentPuzzle()">HACKEAR CERRADURA</button>
+        <p class="error" id="errorMessage">Letras incorrectas borradas. Intenta de nuevo.</p>
+    </div>
 
     <script src="game.js"></script>
+    <script>
+        // Inicializa el puzzle: Palabra a adivinar y a qué puerta va si gana
+        document.addEventListener("DOMContentLoaded", () => {
+            // Se usa "conducir" todo en minúsculas
+            initPuzzle("conducir", "puerta2.html");
+        });
+    </script>
 </body>
 </html>
