@@ -2,30 +2,31 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Escape Room - Puerta 2</title>
+    <title>Escape Room - Puerta 1</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="timer-container"><span id="timer">--:--</span></div>
     
     <div class="door-container">
-        <h2>PUERTA 02: Ojo Clínico</h2>
-        <p>Analiza el siguiente esquema del servidor. ¿Qué anomalía fue detectada en el sector B?</p>
+        <h2>PUERTA 01: Seguridad Vial</h2>
         
-        <!-- Reemplaza "pista.jpg" con el nombre de tu imagen -->
-        <img src="pista.jpg" alt="Pista Visual" class="media-puzzle">
+        <!-- Aquí va la nueva pregunta -->
+        <p>Si consumimos alcohol, algunas drogas y tenemos fatiga al conducir se ven afectados la percepción, el tiempo de respuesta y la...</p>
         
+        <!-- Aquí se generarán las cajas dinámicamente -->
         <div id="letter-slots"></div>
         
         <button onclick="checkCurrentPuzzle()">HACKEAR CERRADURA</button>
-        <p class="error" id="errorMessage">Análisis incorrecto. Intenta de nuevo.</p>
+        <p class="error" id="errorMessage">Letras incorrectas borradas. Intenta de nuevo.</p>
     </div>
 
     <script src="game.js"></script>
     <script>
+        // Inicializa el puzzle: Palabra a adivinar y a qué puerta va si gana
         document.addEventListener("DOMContentLoaded", () => {
-            // La respuesta es "VIRUS" y dirige a la puerta 3
-            initPuzzle("virus", "puerta3.html");
+            // Se cambió "alacran" por "coordinacion"
+            initPuzzle("coordinacion", "puerta2.html");
         });
     </script>
 </body>
