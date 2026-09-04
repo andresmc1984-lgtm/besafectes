@@ -2,21 +2,29 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Escape Room - Puerta 10</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="timer-container">Tiempo Restante: <span id="timer">--:--</span></div>
+    <div id="timer-container"><span id="timer">--:--</span></div>
     
     <div class="door-container">
-        <h2>PUERTA 10: PREVENCION</h2>
-<p>Es preferir ....... que curar</p>
-<input type="text" id="answerInput" placeholder="Número decimal..." autocomplete="off">
-<button onclick="checkAnswer('Prevencion', 'victoria.html')">ABRIR PUERTA</button>
-<p class="error" id="errorMessage">Error de compilación en tu cerebro.</p>
-        </div>
+        <h2>PUERTA 10: La Regla de Oro</h2>
+        <p>Es preferible........ que curar</p>
+        
+        <!-- Aquí se generarán las cajas dinámicamente -->
+        <div id="letter-slots"></div>
+        
+        <button onclick="checkCurrentPuzzle()">HACKEAR CERRADURA</button>
+        <p class="error" id="errorMessage">Letras incorrectas borradas. Intenta de nuevo.</p>
+    </div>
 
     <script src="game.js"></script>
+    <script>
+        // Inicializa el puzzle: Palabra a adivinar y a qué puerta va si gana
+        document.addEventListener("DOMContentLoaded", () => {
+            initPuzzle("prevenir", "victoria.html");
+        });
+    </script>
 </body>
 </html>
