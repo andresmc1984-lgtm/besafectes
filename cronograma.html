@@ -31,15 +31,17 @@
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 40px;
+            gap: 30px; /* Reduje un poco el espacio general */
         }
 
-        /* Contenedor de la Imagen */
+        /* Contenedor de la Imagen Achicado */
         .header-image {
             width: 100%;
-            border-radius: 20px;
+            max-width: 350px; /* Aquí controlamos el tamaño máximo de la imagen */
+            margin: 0 auto; /* Centra la imagen */
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
             background: rgba(255,255,255,0.1); 
         }
 
@@ -63,7 +65,7 @@
             position: absolute;
             top: 20px;
             bottom: 20px;
-            left: 30px; /* Centrado con el circle-container (60px / 2) */
+            left: 30px;
             width: 4px;
             background: var(--line-color);
             transform: translateX(-50%);
@@ -116,7 +118,6 @@
             transform: translateY(-3px);
         }
 
-        /* Flechita apuntando al círculo */
         .content-box::before {
             content: '';
             position: absolute;
@@ -159,7 +160,7 @@
         }
 
         .color-rojo { color: #d32f2f; }
-        .color-amarillo { color: #f57f17; } /* Oscurecido ligeramente para mejor contraste */
+        .color-amarillo { color: #f57f17; }
         .color-verde { color: #2e7d32; }
 
         .time-badge {
@@ -223,7 +224,7 @@
 
     <div class="container">
         
-        <!-- Imagen Principal -->
+        <!-- Imagen Principal (Achicada) -->
         <div class="header-image">
             <img src="img/principal_bsafe.jpg" alt="Imagen Principal BSafe" onerror="this.src='img/principal_bsafe.png'">
         </div>
