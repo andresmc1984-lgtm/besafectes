@@ -1,3 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronograma del Evento - BSafe</title>
+    <style>
+        :root {
+            --bg-dark: #002b54;
+            --bg-light-blue: #a3e3f9;
+            --time-bg: #00e5ff;
+            --text-dark: #002b54;
+            --circle-text: #6ba7c6;
+            --line-color: #21b8d6;
+            --break-bg: rgba(25, 87, 128, 0.95);
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #001f3f 0%, #00457c 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* Contenedor de la Imagen */
+        .header-image {
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.1); 
+        }
+
+        .header-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        /* Diseño de Línea de Tiempo Vertical */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            top: 20px;
+            bottom: 20px;
+            left: 30px; /* Centrado con el circle-container (60px / 2) */
+            width: 4px;
+            background: var(--line-color);
+            transform: translateX(-50%);
+            border-radius: 2px;
+            z-index: 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: stretch;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .circle-container {
+            width: 60px;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            padding-top: 10px; 
+        }
+
+        .circle {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--circle-text);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border: 4px solid var(--line-color);
+        }
+
+        .content-box {
+            background-color: var(--bg-light-blue);
+            border-radius: 15px;
+            padding: 20px 25px;
+            flex-grow: 1;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+        
+        .content-box:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Flechita apuntando al círculo */
+        .content-box::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: -10px;
+            border-width: 10px 10px 10px 0;
+            border-style: solid;
+            border-color: transparent var(--bg-light-blue) transparent transparent;
+        }
+
+        .title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        .station-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .station-row:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .station-name {
+            font-weight: 500;
+        }
+
+        .station-color {
+            font-weight: bold;
+            min-width: 70px;
+            text-align: right;
+        }
+
+        .color-rojo { color: #d32f2f; }
+        .color-amarillo { color: #f57f17; } /* Oscurecido ligeramente para mejor contraste */
+        .color-verde { color: #2e7d32; }
+
+        .time-badge {
+            background-color: var(--time-bg);
+            color: var(--text-dark);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: inline-block;
+            margin-top: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Estilos específicos para el Break */
+        .break-box {
+            background-color: var(--break-bg);
+            color: white;
+        }
+
+        .break-box::before {
+            border-color: transparent var(--break-bg) transparent transparent;
+        }
+
+        .break-box .title {
+            color: white;
+            margin-bottom: 5px;
+            font-size: 1.4rem;
+        }
+
+        .break-box .time-badge {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            margin-top: 5px;
+            box-shadow: none;
+        }
+        
+        .circle-break {
+            background-color: var(--break-bg);
+            color: white;
+            border-color: white;
+            font-size: 1.2rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            .station-row {
+                flex-direction: column;
+                gap: 4px;
+            }
+            .station-color {
+                text-align: left;
+            }
+            .timeline {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Imagen Principal -->
+        <div class="header-image">
+            <img src="img/principal_bsafe.jpg" alt="Imagen Principal BSafe" onerror="this.src='img/principal_bsafe.png'">
+        </div>
+
+        <!-- Cronograma Estilo Línea de Tiempo Vertical -->
+        <div class="timeline">
+            
+            <!-- Item 01 -->
+            <div class="timeline-item">
+                <div class="circle-container">
+                    <div class="circle">01</div>
+                </div>
+                <div class="content-box">
+                    <div class="title">Acreditación, Desayuno + Apertura</div>
+                    <div class="time-badge">8:00 a 09:30</div>
+                </div>
+            </div>
+
+            <!-- Item 02 -->
+            <div class="timeline-item">
+                <div class="circle-container">
+                    <div class="circle">02</div>
+                </div>
+                <div class="content-box">
+                    <div class="station-row">
+                        <span class="station-name">Station 1 - Sala 2: "El origen"</span>
+                        <span class="station-color color-rojo">Rojo</span>
+                    </div>
+                    <div class="station-row">
+                        <span class="station-name">Station 2 - Sala 2: "Al mal tiempo, buena prevención"</span>
+                        <span class="station-color color-amarillo">Amarillo</span>
+                    </div>
+                    <div class="station-row">
+                        <span class="station-name">Station 3 - Sala 1: "Misión cumbre"</span>
+                        <span class="station-color color-verde">Verde</span>
+                    </div>
+                    <div class="time-badge">09:30 a 11:15</div>
+                </div>
+            </div>
+
+            <!-- Item 03 -->
+            <div class="timeline-item">
+                <div class="circle-container">
+                    <div class="circle">03</div>
+                </div>
+                <div class="content-box">
+                    <div class="station-row">
+                        <span class="station-name">Station 1 - Sala 2: "El origen"</span>
+                        <span class="station-color color-amarillo">Amarillo</span>
+                    </div>
+                    <div class="station-row">
+                        <span class="station-name">Station 2 - Sala 2: "Al mal tiempo, buena prevención"</span>
+                        <span class="station-color color-verde">Verde</span>
+                    </div>
+                    <div class="station-row">
+                        <span class="station-name">Station 3 - Sala 1: "Misión cumbre"</span>
+                        <span class="station-color color-rojo">Rojo</span>
+                    </div>
+                    <div class="time-badge">11:15 a 12:45</div>
+                </div>
+            </div>
+
+            <!-- Break -->
+            <div class="timeline-item">
+                <div class="circle-container">
+                    <div class="circle circle-break">☕</div>
+                </div>
+                <div class="content-box break-box">
+                    <div class="title">Break</div>
+                    <div class="time-badge">13:00 a 14:00</div>
+                </div>
+            </div>
+
+            <!-- Item 04 -->
+            <div class="timeline-item">
+                <div class="circle-container">
+                    <div class="circle">04</div>
+                </div>
+                <div class="content-box">
+                    <div class="station-row">
+                        <span class="station-name">Station 1 - Sala 2: "El origen"</span>
+                        <span class="station-color color-verde">Verde</span>
+                    </div>
+                    <div class="station-row">
+                        <span class="station-name">Station 2 - Sala 2: "Al mal tiempo, buena prevención"</span>
+                        <span class="station-color color-rojo">Rojo</span>
+                    </div>
+                    <div class="station-row">
                         <span class="station-name">Station 3 - Sala 1: "Misión cumbre"</span>
                         <span class="station-color color-amarillo">Amarillo</span>
                     </div>
