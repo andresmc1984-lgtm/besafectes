@@ -1,0 +1,18 @@
+<main>
+    <h1>🚨 Protocolo de Actuación B-SAFE</h1>
+    <p>Ante una mordedura o picadura de un animal ponzoñoso, sigue este orden:</p>
+    
+    <ul class="lista-protocolo">
+        <li><input type="checkbox"> <strong>1. ASEGURAR:</strong> Aléjate del animal, no intentes capturarlo con las manos.</li>
+        <li><input type="checkbox"> <strong>2. IDENTIFICAR:</strong> Si es seguro, tómale una foto clara con el celular.</li>
+        <li><input type="checkbox"> <strong>3. PRIMEROS AUXILIOS:</strong> Retirar anillos/relojes (por si hay hinchazón), lavar con agua, inmovilizar. No poner hielo en víboras (sí en alacrán/araña).</li>
+        <li><input type="checkbox"> <strong>4. AVISAR:</strong> Reportar a tu supervisor inmediatamente y activar cobertura de ART.</li>
+    </ul>
+
+    <div class="cierre text-center mt-10">
+        <h2>¡Taller Completado!</h2>
+        <p>Tu seguridad en el terreno es prioridad. Gracias por participar.</p>
+        <!-- Botón para reiniciar o volver al hub del evento -->
+        <a href="animales1.html" class="btn-final">Finalizar</a>
+    </div>
+</main>
