@@ -27,6 +27,20 @@ document.addEventListener("DOMContentLoaded", () => {
         if (timeLeft <= 0) {
             clearInterval(updateTimer);
             localStorage.removeItem("escapeTimeLeft");
+            
+            // --- NUEVA LÓGICA DE ARRASTRE ---
+            // 1. Obtenemos el nombre del archivo actual (ej: "puerta2.html")
+            let paginaActual = window.location.pathname.split('/').pop();
+            
+            // Por si la URL es solo la carpeta raíz, aseguramos un valor por defecto
+            if (!paginaActual || paginaActual === "") {
+                paginaActual = "puerta1.html";
+            }
+            
+            // 2. Lo guardamos en localStorage
+            localStorage.setItem("puertaDondePerdio", paginaActual);
+            // ---------------------------------
+
             window.location.href = "gameover.html"; // Redirigir si pierden
         }
     }, 1000);
@@ -46,8 +60,7 @@ function checkAnswer(correctAnswer, nextDoor) {
     }
 }
 
-// Agrega esto en tu game.js
-
+// Función para inicializar el puzzle de letras separadas
 function initPuzzle(correctWord, nextDoorUrl) {
     const container = document.getElementById("letter-slots");
     container.innerHTML = ""; // Limpiar contenedor
