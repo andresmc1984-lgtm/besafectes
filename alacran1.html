@@ -1,1 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B-SAFE - Identificación de Alacranes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .caracteristica-seleccionada {
+            box-shadow: 0 0 0 4px #3b82f6; /* Borde azul de Tailwind (blue-500) */
+            transform: scale(1.05);
+        }
+        .zona-activa {
+            background-color: #f3f4f6; /* Gris muy claro */
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen p-4">
 
+    <main class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden mt-4">
+        
+        <div class="bg-yellow-500 text-white p-4 text-center">
+            <h1 class="text-2xl font-bold">🦂 Módulo 2: Alacranes</h1>
+            <p class="text-sm font-medium">Aprende a diferenciar el peligroso del inofensivo</p>
+        </div>
+
+        <div class="p-4 md:p-6 text-center">
+            <p class="mb-4 text-gray-700">
+                Selecciona una característica (cuadrado) y luego toca la columna donde crees que pertenece.
+            </p>
+
+            <!-- Imagen de referencia (tu archivo) -->
+            <div class="flex justify-center mb-6">
+                <!-- ASEGÚRATE DE QUE LA RUTA SEA CORRECTA EN TU PROYECTO -->
+                <img src="alacran1.jfif" alt="Diferencias Alacranes" class="max-h-64 rounded-lg shadow-md">
+            </div>
+
+            <!-- Contenedor de las características (fichas para mover) -->
+            <div id="banco-caracteristicas" class="flex flex-wrap justify-center gap-3 mb-8">
+                <!-- Se llenará con JS -->
+            </div>
+
+            <!-- Zonas de caída (Columnas) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Columna: NO PELIGROSO -->
+                <div id="columna-no-peligroso" class="border-4 border-dashed border-green-300 rounded-xl p-4 min-h-[250px] transition duration-200 cursor-pointer flex flex-col items-center bg-green-50/30" onclick="asignarFicha('no-peligroso')">
+                    <h2 class="text-xl font-bold text-green-700 mb-4 border-b-2 border-green-200 pb-2 w-full text-center">🟢 NO PELIGROSO</h2>
+                    <div id="items-no-peligroso" class="w-full flex flex-col gap-2">
+                        <!-- Las fichas correctas caerán aquí -->
+                    </div>
+                </div>
+
+                <!-- Columna: PELIGROSO -->
+                <div id="columna-peligroso" class="border-4 border-dashed border-red-300 rounded-xl p-4 min-h-[250px] transition duration-200 cursor-pointer flex flex-col items-center bg-red-50/30" onclick="asignarFicha('peligroso')">
+                    <h2 class="text-xl font-bold text-red-700 mb-4 border-b-2 border-red-200 pb-2 w-full text-center">🔴 PELIGROSO</h2>
+                    <div id="items-peligroso" class="w-full flex flex-col gap-2">
+                        <!-- Las fichas correctas caerán aquí -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Mensaje de Feedback -->
+            <div id="mensaje-juego" class="mt-6 text-lg font-bold min-h-[2rem]"></div>
+
+            <!-- Botón para avanzar (Oculto al inicio) -->
+            <div id="seccion-continuar" class="hidden mt-8">
+                <p class="text-green-600 font-bold mb-4">¡Clasificación perfecta! Ya sabes cómo identificarlos.</p>
+                <a href="aranas.html" class="inline-block bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105">
+                    Siguiente Módulo: Arañas 🕷️
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Datos basados en la imagen "alacran1.jfif"
+        const caracteristicas = [
+            { id: 1, texto: "Pinzas cortas y anchas", tipo: "no-peligroso" },
+            { id: 2, texto: "Pinzas delgadas y largas", tipo: "peligroso" },
+            { id: 3, texto: "Aguijón con punta simple", tipo: "no-peligroso" },
+            { id: 4, texto: "Aguijón con púa (doble aguijón)", tipo: "peligroso" },
+            { id: 5, texto: "Color marrón oscuro a negro", tipo: "no-peligroso" },
+            { id: 6, texto: "Color amarillo o marrón claro", tipo: "peligroso" },
+            { id: 7, texto: "Líneas longitudinales en el cuerpo (Rayas)", tipo: "peligroso" },
+            { id: 8, texto: "Dorso del mismo color del cuerpo (Sin rayas)", tipo: "no-peligroso" }
+        ];
+
+        let fichaSeleccionada = null;
+        let aciertos = 0;
+
+        // Inicializar el juego
+        function iniciarJuego() {
+            const banco = document.getElementById('banco-caracteristicas');
+            
+            // Mezclar el array para que salgan en orden aleatorio
+            caracteristicas.sort(() => Math.random() - 0.5);
+
+            caracteristicas.forEach(caract => {
+                const ficha = document.createElement('div');
+                ficha.className = "bg-white border-2 border-gray-300 rounded-lg p-3 cursor-pointer shadow-sm text-sm font-semibold text-gray-700 hover:border-blue-400 transition-all text-center flex-grow sm:flex-grow-0 min-w-[140px]";
+                ficha.textContent = caract.texto;
+                ficha.id = 'ficha-' + caract.id;
+                ficha.dataset.tipo = caract.tipo;
+                
+                // Evento al tocar la ficha
+                ficha.onclick = () => seleccionarFicha(ficha);
+                banco.appendChild(ficha);
+            });
+        }
+
+        // Función cuando tocan una característica
+        function seleccionarFicha(fichaElemento) {
+            // Limpiar selección anterior
+            if (fichaSeleccionada) {
+                fichaSeleccionada.classList.remove('caracteristica-seleccionada', 'border-blue-500');
+                fichaSeleccionada.classList.add('border-gray-300');
+            }
+
+            // Seleccionar la nueva
+            fichaSeleccionada = fichaElemento;
+            fichaSeleccionada.classList.remove('border-gray-300');
+            fichaSeleccionada.classList.add('caracteristica-seleccionada', 'border-blue-500');
+            
+            mostrarMensaje("Ficha seleccionada. Ahora toca la columna correcta.", "text-blue-600");
+        }
+
+        // Función cuando tocan una columna
+        function asignarFicha(columnaElegida) {
+            if (!fichaSeleccionada) {
+                mostrarMensaje("Primero selecciona una característica de arriba.", "text-gray-500");
+                return;
+            }
+
+            const tipoCorrecto = fichaSeleccionada.dataset.tipo;
+
+            if (columnaElegida === tipoCorrecto) {
+                // ACERTÓ
+                mostrarMensaje("¡Correcto!", "text-green-600");
+                
+                // Mover la ficha a la columna
+                const contenedorColumna = document.getElementById(`items-${columnaElegida}`);
+                
+                // Cambiar estilos de la ficha para que parezca "acertada"
+                fichaSeleccionada.className = "bg-white border border-gray-200 rounded p-2 text-sm text-center shadow-sm w-full";
+                fichaSeleccionada.onclick = null; // Ya no se puede mover
+                
+                contenedorColumna.appendChild(fichaSeleccionada);
+                fichaSeleccionada = null; // Limpiar selección
+                aciertos++;
+
+                comprobarFinDelJuego();
+            } else {
+                // FALLÓ
+                mostrarMensaje("❌ Incorrecto. Revisa bien la imagen.", "text-red-600");
+                // Pequeña animación de error
+                fichaSeleccionada.classList.add('bg-red-100', 'border-red-500');
+                setTimeout(() => {
+                    if(fichaSeleccionada) {
+                        fichaSeleccionada.classList.remove('bg-red-100', 'border-red-500');
+                    }
+                }, 800);
+            }
+        }
+
+        function mostrarMensaje(texto, clasesColor) {
+            const mensajeDiv = document.getElementById('mensaje-juego');
+            mensajeDiv.textContent = texto;
+            mensajeDiv.className = `mt-6 text-lg font-bold min-h-[2rem] ${clasesColor}`;
+        }
+
+        function comprobarFinDelJuego() {
+            if (aciertos === caracteristicas.length) {
+                mostrarMensaje("¡Juego Completado! 🎉", "text-green-600 text-2xl");
+                document.getElementById('seccion-continuar').classList.remove('hidden');
+                document.getElementById('banco-caracteristicas').classList.add('hidden'); // Ocultar el banco vacío
+            }
+        }
+
+        // Iniciar al cargar la página
+        window.onload = iniciarJuego;
+    </script>
+</body>
+</html>
