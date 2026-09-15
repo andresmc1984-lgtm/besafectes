@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B-SAFE - Checklist de Prevención</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Transición suave para cuando marcan la opción */
+        .tarjeta-check { transition: all 0.3s ease; }
+        /* Aumentamos el tamaño del checkbox para que sea fácil de tocar en celulares */
+        input[type="checkbox"] { width: 1.5rem; height: 1.5rem; accent-color: #16a34a; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans pb-10">
+
+    <main class="max-w-3xl mx-auto p-4 md:p-6 mt-6">
+        
+        <h1 class="text-2xl md:text-3xl font-bold text-center text-blue-800 mb-2">📋 Checklist de Trabajo Seguro</h1>
+        <p class="text-center text-gray-600 mb-6">
+            Confirma las medidas preventivas en terreno para habilitar el siguiente módulo.
+        </p>
+
+        <!-- Barra de Progreso -->
+        <div class="w-full bg-gray-300 rounded-full h-4 mb-6 shadow-inner">
+            <div id="barra-progreso" class="bg-green-500 h-4 rounded-full" style="width: 0%; transition: width 0.5s ease;"></div>
+        </div>
+        <p class="text-right text-sm font-bold text-gray-500 mb-6" id="texto-progreso">0% Completado</p>
+
+        <!-- Lista de Verificación -->
+        <div class="space-y-4" id="contenedor-checklist">
+            
+            <!-- Opción 1 -->
+            <label class="tarjeta-check flex items-start p-4 bg-white border-2 border-gray-200 rounded-xl shadow-sm cursor-pointer">
+                <input type="checkbox" class="checklist-item mt-1 rounded">
+                <div class="ml-4">
+                    <span class="block font-bold text-lg">🥾 Uso de EPP</span>
+                    <span class="text-gray-600 text-sm">Uso calzado de seguridad cerrado y pantalón largo para transitar en domicilios o pastizales.</span>
+                </div>
+            </label>
+
+            <!-- Opción 2 -->
+            <label class="tarjeta-check flex items-start p-4 bg-white border-2 border-gray-200 rounded-xl shadow-sm cursor-pointer">
+                <input type="checkbox" class="checklist-item mt-1 rounded">
+                <div class="ml-4">
+                    <span class="block font-bold text-lg">🔍 Inspección Visual</span>
+                    <span class="text-gray-600 text-sm">Antes de abrir cajas de conexión o mover escombros, reviso bien. Nunca meto la mano a ciegas.</span>
+                </div>
+            </label>
+
+            <!-- Opción 3 -->
+            <label class="tarjeta-check flex items-start p-4 bg-white border-2 border-gray-200 rounded-xl shadow-sm cursor-pointer">
+                <input type="checkbox" class="checklist-item mt-1 rounded">
+                <div class="ml-4">
+                    <span class="block font-bold text-lg">📏 Distancia de Seguridad</span>
+                    <span class="text-gray-600 text-sm">Si veo una serpiente, mantengo al menos 2 metros de distancia y retrocedo lentamente.</span>
+                </div>
+            </label>
+
+            <!-- Opción 4 -->
+            <label class="tarjeta-check flex items-start p-4 bg-white border-2 border-gray-200 rounded-xl shadow-sm cursor-pointer">
+                <input type="checkbox" class="checklist-item mt-1 rounded">
+                <div class="ml-4">
+                    <span class="block font-bold text-lg">🚫 Cero Manipulación</span>
+                    <span class="text-gray-600 text-sm">Bajo ningún motivo intento acorralar, capturar o matar a la víbora. Aviso al cliente y supervisor.</span>
+                </div>
+            </label>
+
+            <!-- Opción 5 -->
+            <label class="tarjeta-check flex items-start p-4 bg-white border-2 border-gray-200 rounded-xl shadow-sm cursor-pointer">
+                <input type="checkbox" class="checklist-item mt-1 rounded">
+                <div class="ml-4">
+                    <span class="block font-bold text-lg">💍 Liberar la Zona (Emergencia)</span>
+                    <span class="text-gray-600 text-sm">Si ocurre una mordedura, lo primero que hago es quitar anillos, relojes o pulseras antes de que se inflame.</span>
+                </div>
+            </label>
+
+        </div>
+
+        <!-- Botón de Siguiente (Oculto al inicio) -->
+        <div id="seccion-continuar" class="hidden mt-10 text-center opacity-0 transition-opacity duration-500">
+            <h2 class="text-xl font-bold text-green-600 mb-4">¡Excelente! Estás listo para el terreno.</h2>
+            <!-- AQUÍ PONES EL ENLACE A LA PÁGINA DE ALACRANES -->
+            <a href="alacranes1.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition">
+                Siguiente Módulo: Alacranes 🦂
+            </a>
+        </div>
+
+    </main>
+
+    <script>
+        const checkboxes = document.querySelectorAll('.checklist-item');
+        const barraProgreso = document.getElementById('barra-progreso');
+        const textoProgreso = document.getElementById('texto-progreso');
+        const seccionContinuar = document.getElementById('seccion-continuar');
+        const totalItems = checkboxes.length;
+
+        checkboxes.forEach(box => {
+            box.addEventListener('change', function() {
+                // Seleccionamos el label contenedor para cambiarle el color
+                const tarjeta = this.closest('.tarjeta-check');
+                
+                if (this.checked) {
+                    tarjeta.classList.add('bg-green-50', 'border-green-400');
+                    tarjeta.classList.remove('bg-white', 'border-gray-200');
+                } else {
+                    tarjeta.classList.remove('bg-green-50', 'border-green-400');
+                    tarjeta.classList.add('bg-white', 'border-gray-200');
+                }
+
+                actualizarProgreso();
+            });
+        });
+
+        function actualizarProgreso() {
+            // Contamos cuántos están marcados
+            const marcados = document.querySelectorAll('.checklist-item:checked').length;
+            
+            // Calculamos el porcentaje
+            const porcentaje = Math.round((marcados / totalItems) * 100);
+            
+            // Actualizamos la barra visual y el texto
+            barraProgreso.style.width = porcentaje + '%';
+            textoProgreso.textContent = porcentaje + '% Completado';
+
+            // Si llegamos al 100%, mostramos el botón de continuar
+            if (marcados === totalItems) {
+                seccionContinuar.classList.remove('hidden');
+                // Un pequeño delay para que la animación de aparición (fade-in) funcione
+                setTimeout(() => {
+                    seccionContinuar.classList.remove('opacity-0');
+                }, 100);
+            } else {
+                seccionContinuar.classList.add('opacity-0');
+                setTimeout(() => {
+                    seccionContinuar.classList.add('hidden');
+                }, 500); // Espera a que termine la transición de opacidad para ocultarlo
+            }
+        }
+    </script>
+</body>
+</html>
