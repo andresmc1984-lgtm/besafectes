@@ -24,7 +24,7 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8" id="snakeGrid">
-            </div>
+        </div>
 
         <div id="controls" class="mt-10">
             <button id="evalBtn" onclick="evaluateSelection()" disabled
@@ -132,21 +132,28 @@
             });
 
             const msgElement = document.getElementById('message');
+            const btn = document.getElementById('evalBtn');
+
+            // Darle clases de estilo para el estado final al botón
+            btn.className = "inline-flex items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-lg px-8 py-4 rounded-xl shadow-lg shadow-emerald-500/20 transform hover:-translate-y-0.5 transition-all duration-200 mt-4 w-full sm:w-auto";
+
+            // Lógica para victoria o derrota
             if (correctCount === 3) {
                 msgElement.classList.replace('text-amber-400', 'text-red-500');
                 msgElement.innerText = "¡EXCELENTE! Identificaron correctamente a las 3 especies peligrosas.";
+                
+                // Cambiar botón a "Seguir" y redirigir
+                btn.innerText = "Seguir";
+                btn.onclick = () => window.location.href = 'animales3.html';
             } else {
                 msgElement.classList.replace('text-amber-400', 'text-orange-400');
                 msgElement.innerText = `Cuidado. Acertaron ${correctCount} de 3. Aprendamos a diferenciarlas.`;
+                
+                // Cambiar botón a "Jugar de Nuevo"
+                btn.innerText = "Jugar de Nuevo";
+                btn.onclick = () => location.reload();
             }
-
-            // Cambiar botón a "Reiniciar"
-            const btn = document.getElementById('evalBtn');
-            btn.innerText = "Jugar de Nuevo";
-            btn.onclick = () => location.reload();
-            btn.className = "inline-flex items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-lg px-8 py-4 rounded-xl shadow-lg shadow-emerald-500/20 transform hover:-translate-y-0.5 transition-all duration-200 mt-4 w-full sm:w-auto";
         }
     </script>
-
 </body>
 </html>
