@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Mando Biológico | B-SAFE CORRIENTES</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Animaciones para alertas y pulso táctico */
+        @keyframes radar-sweep {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-radar { animation: radar-sweep 4s linear infinite; }
+        .glow-emerald { box-shadow: 0 0 25px rgba(16, 185, 129, 0.25); }
+        .glow-red { box-shadow: 0 0 25px rgba(239, 68, 68, 0.35); }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-slate-100 min-h-screen flex flex-col justify-between p-3 md:p-6 font-sans relative overflow-x-hidden">
+
+    <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-50 w-full h-full"></canvas>
+
+    <header class="w-full max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 py-3 px-5 bg-slate-900/80 border border-slate-700/60 rounded-2xl shadow-xl backdrop-blur-md mb-6">
+        <div class="flex items-center gap-3">
+            <div class="bg-emerald-500/20 text-emerald-400 p-2.5 rounded-xl border border-emerald-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+            </div>
+            <div>
+                <span class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold block">Desafío Táctico Central</span>
+                <span class="text-xl md:text-2xl font-black tracking-tight text-white">B-SAFE CORRIENTES</span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <div class="text-right">
+                <span class="text-xs uppercase text-slate-400 font-bold block">Integridad Operativa</span>
+                <div class="flex items-center gap-2">
+                    <div class="w-32 bg-slate-800 rounded-full h-3 border border-slate-700 overflow-hidden">
+                        <div id="healthBar" class="bg-emerald-500 h-full w-full transition-all duration-500"></div>
+                    </div>
+                    <span id="healthText" class="text-sm font-black text-emerald-400">100%</span>
+                </div>
+            </div>
+            <div class="border-l border-slate-700 pl-4 text-center">
+                <span class="text-[10px] uppercase text-slate-400 font-bold block">Casos Resueltos</span>
+                <span id="solvedCasesCount" class="text-lg font-black text-amber-400">0 / 3</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow w-full max-w-6xl mx-auto flex flex-col justify-center">
+        
+        <div id="missionScreen" class="bg-slate-900/90 border border-slate-700/80 rounded-2xl shadow-2xl p-6 md:p-8 backdrop-blur-md">
+            
+            <div class="flex flex-wrap gap-2 mb-6 border-b border-slate-800 pb-4">
+                <button id="tab-0" onclick="switchIncident(0)" class="tab-btn px-4 py-2 rounded-lg font-bold text-xs md:text-sm flex items-center gap-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    Caso A: Tendido Zanja (Víbora)
+                </button>
+                <button id="tab-1" onclick="switchIncident(1)" class="tab-btn px-4 py-2 rounded-lg font-bold text-xs md:text-sm flex items-center gap-2 bg-slate-800 text-slate-400 border border-slate-700 opacity-60">
+                    <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                    Caso B: Desagüe Pluvial (Alacrán)
+                </button>
+                <button id="tab-2" onclick="switchIncident(2)" class="tab-btn px-4 py-2 rounded-lg font-bold text-xs md:text-sm flex items-center gap-2 bg-slate-800 text-slate-400 border border-slate-700 opacity-60">
+                    <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                    Caso C: Caja Distribución (Araña)
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <div class="lg:col-span-5 bg-slate-950/70 border border-slate-800 rounded-xl p-5 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span id="caseZone" class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md border border-amber-400/20">Zona: Periferia Urbana</span>
+                            <span id="casePriority" class="text-xs font-bold text-red-400 flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> Código Rojo
+                            </span>
+                        </div>
+                        <h2 id="caseTitle" class="text-xl font-black text-white mb-2 leading-snug">Reporte de Cuadrilla</h2>
+                        <p id="caseDescription" class="text-sm text-slate-300 leading-relaxed mb-4">
+                            </p>
+                        
+                        <div class="bg-slate-900 border border-slate-800 rounded-lg p-3 mb-4">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Evidencia Visual Transmitida</span>
+                            <p id="caseEvidence" class="text-xs text-emerald-300 font-mono italic">
+                                </p>
+                        </div>
+                    </div>
+
+                    <div id="statusBadge" class="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold text-center">
+                        Esperando decisiones del Coordinador...
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 flex flex-col justify-between">
+                    
+                    <div class="mb-5">
+                        <label class="text-xs uppercase tracking-wider text-slate-400 font-bold block mb-2">
+                            Paso 1: Clasificación de la Especie Involucrada
+                        </label>
+                        <div id="speciesOptions" class="grid grid-cols-2 gap-2">
+                            </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="text-xs uppercase tracking-wider text-slate-400 font-bold block mb-2">
+                            Paso 2: Diagnóstico Diferencial (Rasgo Morfológico Clave)
+                        </label>
+                        <div id="traitOptions" class="grid grid-cols-2 gap-2">
+                            </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="text-xs uppercase tracking-wider text-slate-400 font-bold block mb-2">
+                            Paso 3: Directiva Operativa Inmediata (Primeros Auxilios)
+                        </label>
+                        <div id="protocolOptions" class="space-y-2">
+                            </div>
+                    </div>
+
+                    <button id="submitCaseBtn" onclick="evaluateCurrentIncident()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-3.5 px-6 rounded-xl shadow-lg shadow-emerald-500/20 transform hover:-translate-y-0.5 transition-all text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                        <span>Transmitir Órdenes a Cuadrilla</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="victoryScreen" class="hidden bg-slate-900/95 border-2 border-emerald-500/60 rounded-3xl p-8 md:p-12 text-center max-w-3xl mx-auto shadow-2xl backdrop-blur-xl relative overflow-hidden">
+            
+            <div class="absolute -top-24 -left-24 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl"></div>
+
+            <div class="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-gradient-to-tr from-emerald-600 to-teal-400 text-slate-950 p-4 shadow-xl mb-6 transform hover:scale-110 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+            </div>
+
+            <span class="text-xs uppercase tracking-widest text-emerald-400 font-extrabold block mb-2">Misión Cumplida Exitosamente</span>
+            <h1 class="text-3xl md:text-5xl font-black text-white mb-4">¡FELICITACIONES, EQUIPO!</h1>
+            
+            <p class="text-slate-300 text-base md:text-lg max-w-xl mx-auto mb-6 leading-relaxed">
+                Has demostrado un dominio ejemplar en la identificación de especies ponzoñosas y en la aplicación estricta de los protocolos de primeros auxilios. Las 3 cuadrillas fueron aseguradas sin secuelas.
+            </p>
+
+            <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-6 mb-8 text-left grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="border-b sm:border-b-0 sm:border-r border-slate-800 pb-3 sm:pb-0">
+                    <span class="text-xs text-slate-400 uppercase font-bold block">Evento</span>
+                    <span class="text-emerald-400 font-extrabold text-base">B-SAFE Corrientes</span>
+                </div>
+                <div class="border-b sm:border-b-0 sm:border-r border-slate-800 pb-3 sm:pb-0">
+                    <span class="text-xs text-slate-400 uppercase font-bold block">Calificación</span>
+                    <span id="finalScore" class="text-amber-400 font-extrabold text-base">100% Eficiencia</span>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-400 uppercase font-bold block">Acreditación</span>
+                    <span class="text-white font-extrabold text-base">Líder en Seguridad</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="location.reload()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-3.5 px-8 rounded-xl transition-all border border-slate-700 text-sm">
+                    Reiniciar Simulador
+                </button>
+                <a href="index.html" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-3.5 px-8 rounded-xl transition-all shadow-lg shadow-emerald-500/30 text-sm flex items-center justify-center gap-2">
+                    <span>Volver al Inicio del Stand</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                </a>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="w-full max-w-6xl mx-auto py-4 mt-6 border-t border-slate-800/80 text-center text-xs text-slate-500">
+        B-SAFE Corrientes &bull; Salud Ocupacional y Prevención de Riesgos en Telecomunicaciones
+    </footer>
+
+    <script>
+        // SINTETIZADOR DE AUDIO (Web Audio API nativo)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, type = 'sine', duration = 0.15) {
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) { /* Audio silenciado si el navegador bloquea */ }
+        }
+
+        function playSuccessFanfare() {
+            [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                setTimeout(() => playTone(freq, 'triangle', 0.3), i * 150);
+            });
+        }
+
+        // BASE DE DATOS DE INCIDENTES INTEGRADOS
+        const incidents = [
+            {
+                id: 0,
+                name: "Caso A: Tendido Zanja (Víbora)",
+                zone: "Zona: San Jerónimo / Terreno con Escombros",
+                title: "Mordedura en Pie al Despejar Ladrillos",
+                desc: "Un técnico de cuadrilla estaba zanjeando cerca de un montículo de escombros y ladrillos húmedos. Al remover un ladrillo hueco sintió un golpe doloroso en la botamanga. Refiere intenso ardor, sangrado constante en dos puntos y un edema violáceo que empieza a extenderse rápidamente.",
+                evidence: "Compañero reporta: 'Serpiente robusta, marrón grisácea, cabeza triangular bien marcada, cola corta y gruesa sin cascabel, y manchas laterales oscuras en forma de C contrapuestas o riñones'.",
+                speciesOptions: [
+                    { name: "Yarará de la Cruz (Bothrops)", correct: true },
+                    { name: "Culebra Verde (Inofensiva)", correct: false },
+                    { name: "Serpiente de Coral (Micrurus)", correct: false },
+                    { name: "Curiyú (Boa constrictora)", correct: false }
+                ],
+                traitOptions: [
+                    { name: "Foseta loreal entre el ojo y la narina + pupila vertical", correct: true },
+                    { name: "Pupilas completamente redondas y cabeza ovalada", correct: false },
+                    { name: "Anillos concéntricos completos rojos y negros", correct: false },
+                    { name: "Crótalo sonoro en la punta de la cola", correct: false }
+                ],
+                protocolOptions: [
+                    { text: "Retirar bota y medias de inmediato antes de que el edema comprima el pie; inmovilizar el miembro, reposo absoluto y traslado urgente al centro asistencial.", correct: true },
+                    { text: "Aplicar un torniquete firme con un cable coaxial por encima de la rodilla para que el veneno no circule al tórax.", correct: false },
+                    { text: "Hacer un corte con la trincheta sobre los orificios para drenar la sangre contaminada con el veneno.", correct: false }
+                ],
+                solved: false
+            },
+            {
+                id: 1,
+                name: "Caso B: Desagüe Pluvial (Alacrán)",
+                zone: "Zona: Costanera / Cámara Pluvial Subterránea",
+                title: "Picadura en Palma de la Mano en Acometida",
+                desc: "El técnico introdujo la mano enguantada en una cámara húmeda pero el guante estaba rasgado. Sufrió una picadura súbita de dolor quemante intenso. Presenta sudoración profusa en la frente, salivación excesiva (sialorrea) y sensación de opresión torácica.",
+                evidence: "Atraparon al animal en un frasco de plástico: 'Cuerpo marrón amarillento claro, dorso con 3 franjas longitudinales oscuras muy notorias, pinzas delgadas y largas, y en la cola se aprecia una púa secundaria bajo el aguijón'.",
+                speciesOptions: [
+                    { name: "Tityus trivittatus (Peligroso)", correct: true },
+                    { name: "Bothriurus bonariensis (Inofensivo)", correct: false },
+                    { name: "Gryllotalpa (Grillo topo)", correct: false },
+                    { name: "Opilión de tierra", correct: false }
+                ],
+                traitOptions: [
+                    { name: "Pinzas muy finas y largas + telson con doble espina (aguijón doble)", correct: true },
+                    { name: "Pinzas globosas, redondas y gruesas con un solo aguijón", correct: false },
+                    { name: "Color negro azabache uniforme sin franjas dorsales", correct: false },
+                    { name: "Abdomen abultado con mancha roja brillante", correct: false }
+                ],
+                protocolOptions: [
+                    { text: "Colocar hielo envuelto en un paño en la zona afectada para calmar el dolor y enlentecer el veneno, retirar reloj/anillos y traslado inmediato con el frasco.", correct: true },
+                    { text: "Frotar barro y alcohol para neutralizar el ácido del aguijón y esperar en la camioneta a que baje el dolor.", correct: false },
+                    { text: "Hacerlo trotar alrededor del móvil para que elimine el veneno por transpiración.", correct: false }
+                ],
+                solved: false
+            },
+            {
+                id: 2,
+                name: "Caso C: Caja Distribución (Araña)",
+                zone: "Zona: Laguna Seca / Instalación Domiciliaria",
+                title: "Pinchazo Leve al Conectar Splitter Detrás de Mueble",
+                desc: "Al manipular la caja terminal ubicada detrás de un ropero viejo en el domicilio del abonado, sintió un pinchazo leve. Tres horas después, nota dolor ardiente localizado y una mancha violácea pálida central con borde eritematoso (aspecto de quemadura).",
+                evidence: "Fotografía tomada con celular: 'Araña de aproximadamente 1 cm de cuerpo, color pardo marrón uniforme sin manchas atigradas, y un dibujo que simula fielmente un violín en el cefalotórax'.",
+                speciesOptions: [
+                    { name: "Loxosceles (Araña de los Rincones)", correct: true },
+                    { name: "Viuda Negra (Latrodectus)", correct: false },
+                    { name: "Araña Pata Larga (Pholcus)", correct: false },
+                    { name: "Araña Lobo de Jardín", correct: false }
+                ],
+                traitOptions: [
+                    { name: "Marca de violín en el tórax + 6 ojos distribuidos en 3 pares", correct: true },
+                    { name: "Reloj de arena rojo vivo en un abdomen globular negro", correct: false },
+                    { name: "Postura erguida agresiva con pelos rojos en los colmillos", correct: false },
+                    { name: "Cuerpo cubierto de abundante vello dorado y 8 ojos frontales", correct: false }
+                ],
+                protocolOptions: [
+                    { text: "Aplicar frío local moderado de inmediato (inactiva la enzima destructiva del veneno), reposo del miembro y consulta médica urgente.", correct: true },
+                    { text: "Colocar paños calientes o acercar fuego para desnaturalizar las proteínas por calor directo.", correct: false },
+                    { text: "Apretar y pellizcar la zona para reventar la ampolla antes de que se forme.", correct: false }
+                ],
+                solved: false
+            }
+        ];
+
+        let currentIncidentIdx = 0;
+        let health = 100;
+        let selectedAnswers = { species: null, trait: null, protocol: null };
+
+        // CAMBIO DE PESTAÑA / CASO
+        function switchIncident(index) {
+            playTone(400, 'sine', 0.08);
+            currentIncidentIdx = index;
+            selectedAnswers = { species: null, trait: null, protocol: null };
+
+            // Actualizar estilo pestañas
+            incidents.forEach((inc, idx) => {
+                const tab = document.getElementById(`tab-${idx}`);
+                if (idx === index) {
+                    tab.className = "tab-btn px-4 py-2 rounded-lg font-bold text-xs md:text-sm flex items-center gap-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 glow-emerald";
+                    tab.querySelector('span').className = "w-2 h-2 rounded-full bg-emerald-400 animate-ping";
+                } else if (inc.solved) {
+                    tab.className = "tab-btn px-4 py-2 rounded-lg font-bold text-xs md:text-sm flex items-center gap-2 bg-slate-900 text-emerald-400/70 border border-slate-800";
+                    tab.querySelector('span').className = "w-2 h-2 rounded-full bg-emerald-500";
+                } else {
+                    tab.className = "tab-btn px-4 py-2 rounded-lg font-bold text-xs md:text-sm flex items-center gap-2 bg-slate-800 text-slate-400 border border-slate-700 opacity-60";
+                    tab.querySelector('span').className = "w-2 h-2 rounded-full bg-slate-500";
+                }
+            });
+
+            renderIncident();
+        }
+
+        // RENDERIZADO DEL INCIDENTE
+        function renderIncident() {
+            const inc = incidents[currentIncidentIdx];
+
+            document.getElementById('caseZone').innerText = inc.zone;
+            document.getElementById('caseTitle').innerText = inc.title;
+            document.getElementById('caseDescription').innerText = inc.desc;
+            document.getElementById('caseEvidence').innerText = inc.evidence;
+
+            const badge = document.getElementById('statusBadge');
+            if (inc.solved) {
+                badge.className = "p-3 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold text-center";
+                badge.innerText = "¡ESTE CASO YA FUE NEUTRALIZADO Y PROTOCOLIZADO!";
+            } else {
+                badge.className = "p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold text-center";
+                badge.innerText = "Esperando directivas del Coordinador...";
+            }
+
+            // Opciones de Especie
+            const speciesContainer = document.getElementById('speciesOptions');
+            speciesContainer.innerHTML = '';
+            inc.speciesOptions.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "opt-btn p-3 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs md:text-sm font-semibold transition-all text-left";
+                btn.innerText = opt.name;
+                btn.onclick = () => selectOption('species', idx, btn);
+                if (inc.solved && opt.correct) btn.classList.add('border-emerald-500', 'bg-emerald-950/40', 'text-emerald-300');
+                speciesContainer.appendChild(btn);
+            });
+
+            // Opciones de Biometría
+            const traitContainer = document.getElementById('traitOptions');
+            traitContainer.innerHTML = '';
+            inc.traitOptions.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "opt-btn p-3 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs md:text-sm font-semibold transition-all text-left";
+                btn.innerText = opt.name;
+                btn.onclick = () => selectOption('trait', idx, btn);
+                if (inc.solved && opt.correct) btn.classList.add('border-emerald-500', 'bg-emerald-950/40', 'text-emerald-300');
+                traitContainer.appendChild(btn);
+            });
+
+            // Opciones de Protocolo
+            const protocolContainer = document.getElementById('protocolOptions');
+            protocolContainer.innerHTML = '';
+            inc.protocolOptions.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "opt-btn p-3 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs md:text-sm font-medium transition-all text-left w-full";
+                btn.innerText = opt.text;
+                btn.onclick = () => selectOption('protocol', idx, btn);
+                if (inc.solved && opt.correct) btn.classList.add('border-emerald-500', 'bg-emerald-950/40', 'text-emerald-300');
+                protocolContainer.appendChild(btn);
+            });
+
+            const submitBtn = document.getElementById('submitCaseBtn');
+            if (inc.solved) {
+                submitBtn.classList.add('opacity-50', 'pointer-events-none');
+                submitBtn.innerText = "Caso Completado";
+            } else {
+                submitBtn.classList.remove('opacity-50', 'pointer-events-none');
+                submitBtn.innerText = "Transmitir Órdenes a Cuadrilla";
+            }
+        }
+
+        // SELECCIÓN VISUAL
+        function selectOption(category, index, btnElement) {
+            playTone(600, 'sine', 0.05);
+            selectedAnswers[category] = index;
+
+            // Resetear hermanos
+            const parent = btnElement.parentElement;
+            Array.from(parent.children).forEach(child => {
+                child.classList.remove('border-emerald-400', 'bg-emerald-950/60', 'text-white', 'glow-emerald');
+                child.classList.add('border-slate-700', 'bg-slate-800/80', 'text-slate-200');
+            });
+
+            // Resaltar seleccionado
+            btnElement.classList.remove('border-slate-700', 'bg-slate-800/80', 'text-slate-200');
+            btnElement.classList.add('border-emerald-400', 'bg-emerald-950/60', 'text-white');
+        }
+
+        // EVALUACIÓN DE LAS DECISIONES
+        function evaluateCurrentIncident() {
+            const inc = incidents[currentIncidentIdx];
+
+            if (selectedAnswers.species === null || selectedAnswers.trait === null || selectedAnswers.protocol === null) {
+                alert("Atención: Debes completar los 3 pasos (Especie, Biometría y Protocolo) antes de transmitir la orden.");
+                return;
+            }
+
+            const speciesCorrect = inc.speciesOptions[selectedAnswers.species].correct;
+            const traitCorrect = inc.traitOptions[selectedAnswers.trait].correct;
+            const protocolCorrect = inc.protocolOptions[selectedAnswers.protocol].correct;
+
+            if (speciesCorrect && traitCorrect && protocolCorrect) {
+                // Acierto Total
+                playTone(800, 'triangle', 0.2);
+                inc.solved = true;
+
+                const badge = document.getElementById('statusBadge');
+                badge.className = "p-3 rounded-lg bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 text-xs font-black text-center";
+                badge.innerText = "¡ÓRDENES TRANSMITIDAS CON ÉXITO! Protocolo médico impecable.";
+
+                document.getElementById('submitCaseBtn').classList.add('opacity-50', 'pointer-events-none');
+                document.getElementById('submitCaseBtn').innerText = "Caso Completado";
+
+                updateCounters();
+                checkGlobalVictory();
+
+            } else {
+                // Error o Negligencia detectada
+                playTone(180, 'sawtooth', 0.35);
+                health = Math.max(0, health - 20);
+                updateHealthUI();
+
+                let errorMsg = "ALERTA DE SEGURIDAD:";
+                if (!speciesCorrect) errorMsg += "\n- La especie identificada es errónea.";
+                if (!traitCorrect) errorMsg += "\n- El rasgo biológico no corresponde a los signos de alarma.";
+                if (!protocolCorrect) errorMsg += "\n- La directiva de primeros auxilios incluye mitos o prácticas peligrosas.";
+
+                alert(errorMsg + "\n\nSe ha reducido la Integridad Operativa. Revisa la evidencia y corrige las directivas.");
+            }
+        }
+
+        function updateHealthUI() {
+            const bar = document.getElementById('healthBar');
+            const txt = document.getElementById('healthText');
+            bar.style.width = `${health}%`;
+            txt.innerText = `${health}%`;
+
+            if (health < 40) {
+                bar.className = "bg-red-500 h-full transition-all duration-500";
+                txt.className = "text-sm font-black text-red-400";
+            } else if (health < 70) {
+                bar.className = "bg-amber-500 h-full transition-all duration-500";
+                txt.className = "text-sm font-black text-amber-400";
+            }
+        }
+
+        function updateCounters() {
+            const solvedCount = incidents.filter(i => i.solved).length;
+            document.getElementById('solvedCasesCount').innerText = `${solvedCount} / 3`;
+
+            // Actualizar estilo pestaña actual
+            const tab = document.getElementById(`tab-${currentIncidentIdx}`);
+            tab.className = "tab-btn px-4 py-2 rounded-lg font-bold text-xs md:text-sm flex items-center gap-2 bg-slate-900 text-emerald-400/80 border border-emerald-500/40";
+            tab.querySelector('span').className = "w-2 h-2 rounded-full bg-emerald-500";
+        }
+
+        // VERIFICAR VICTORIA TOTAL
+        function checkGlobalVictory() {
+            const allSolved = incidents.every(i => i.solved);
+            if (allSolved) {
+                setTimeout(() => {
+                    document.getElementById('missionScreen').classList.add('hidden');
+                    document.getElementById('victoryScreen').classList.remove('hidden');
+                    document.getElementById('finalScore').innerText = `${health}% Eficiencia Operativa`;
+                    playSuccessFanfare();
+                    startConfetti();
+                }, 800);
+            }
+        }
+
+        // MOTOR DE CONFETI EN CANVAS NATIVO
+        function startConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = Array.from({ length: 120 }).map(() => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                size: Math.random() * 8 + 4,
+                speedY: Math.random() * 4 + 2,
+                speedX: Math.random() * 2 - 1,
+                color: ['#10b981', '#f59e0b', '#3b82f6', '#ec4899', '#ffffff'][Math.floor(Math.random() * 5)]
+            }));
+
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+                    if (p.y > canvas.height) p.y = -10;
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                });
+                requestAnimationFrame(render);
+            }
+            render();
+        }
+
+        // Inicializar Caso A
+        renderIncident();
+    </script>
+</body>
+</html>
