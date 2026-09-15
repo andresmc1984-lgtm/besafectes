@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B-SAFE - Premisas sobre Alacranes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Estilos para los botones seleccionados */
+        .btn-seleccionado-v { background-color: #3b82f6 !important; color: white !important; border-color: #2563eb !important; }
+        .btn-seleccionado-f { background-color: #3b82f6 !important; color: white !important; border-color: #2563eb !important; }
+        /* Estilos tras comprobación */
+        .correcto { background-color: #22c55e !important; color: white !important; border-color: #16a34a !important; }
+        .incorrecto { background-color: #ef4444 !important; color: white !important; border-color: #dc2626 !important; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen p-4 pb-12">
+
+    <main class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden mt-4">
+        
+        <!-- Encabezado -->
+        <div class="bg-yellow-500 text-white p-6 text-center">
+            <h1 class="text-3xl font-bold">🦂 Repaso Táctico: Alacranes</h1>
+            <p class="text-md font-medium mt-2">Marca Verdadero (V) o Falso (F) en las siguientes 15 afirmaciones operativas.</p>
+        </div>
+
+        <div class="p-4 md:p-8">
+            
+            <!-- Contenedor donde se inyectarán las 15 preguntas -->
+            <div id="lista-premisas" class="space-y-4 mb-8">
+                <!-- Se llena con JS -->
+            </div>
+
+            <!-- Feedback del resultado -->
+            <div id="mensaje-resultado" class="hidden text-center p-4 mb-6 rounded-xl font-bold text-xl fade-in"></div>
+
+            <!-- Botón de acción dual (Comprobar -> Continuar) -->
+            <div class="text-center">
+                <button id="btn-accion" onclick="comprobarCuestionario()" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-12 rounded-full shadow-lg transition-all transform hover:scale-105 text-lg">
+                    Comprobar Respuestas
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Las 15 premisas enfocadas al personal técnico de telecomunicaciones
+        const premisas = [
+            { texto: "Todos los alacranes que encontramos son mortales para el ser humano.", correcta: false },
+            { texto: "El alacrán de mayor peligro (Tityus) tiene pinzas finas y largas.", correcta: true },
+            { texto: "Los alacranes siempre andan en pareja; si veo uno, seguro está el otro.", correcta: false }, // Mito común
+            { texto: "Suelen esconderse en cajas de conexión subterráneas, escombros y tableros.", correcta: true },
+            { texto: "Ante una picadura de alacrán, debo hacerme un torniquete en el brazo/pierna.", correcta: false },
+            { texto: "Pueden trepar paredes rugosas y caer desde techos o cañerías.", correcta: true },
+            { texto: "El alacrán inofensivo suele ser de color muy oscuro, con pinzas gordas y cortas.", correcta: true },
+            { texto: "Fumigar con insecticida común para mosquitos elimina fácilmente a los alacranes.", correcta: false },
+            { texto: "A diferencia de las víboras, aplicar hielo en una picadura de alacrán SÍ ayuda a calmar el dolor.", correcta: true },
+            { texto: "Solo pican de noche. De día es seguro manipular escombros sin guantes.", correcta: false },
+            { texto: "Es obligatorio sacudir la ropa, el calzado y los guantes antes de ponérselos.", correcta: true },
+            { texto: "El aguijón del alacrán peligroso tiene una púa extra, pareciendo doble.", correcta: true },
+            { texto: "Si veo un alacrán, la forma más segura de atraparlo es agarrándolo de la cola con la mano.", correcta: false },
+            { texto: "El veneno afecta el sistema nervioso, causando mucho dolor, sudoración y taquicardia.", correcta: true },
+            { texto: "Si me pica y no duele mucho, puedo seguir trabajando sin avisar a mi supervisor/ART.", correcta: false }
+        ];
+
+        let respuestasUsuario = new Array(premisas.length).fill(null);
+        let cuestionarioCorregido = false;
+
+        // Función para renderizar las preguntas en la pantalla
+        function renderizarPreguntas() {
+            const contenedor = document.getElementById('lista-premisas');
+            
+            premisas.forEach((premisa, index) => {
+                const itemHTML = `
+                    <div class="flex flex-col md:flex-row items-center justify-between bg-gray-50 border border-gray-200 p-4 rounded-xl shadow-sm hover:shadow-md transition">
+                        <span class="text-gray-700 font-medium mb-4 md:mb-0 md:pr-4 flex-1">
+                            <strong class="text-yellow-600">${index + 1}.</strong> ${premisa.texto}
+                        </span>
+                        <div class="flex space-x-2 shrink-0">
+                            <button id="btn-v-${index}" onclick="seleccionarRespuesta(${index}, true)" class="w-12 h-12 rounded-lg font-bold border-2 border-gray-300 text-gray-500 hover:bg-gray-200 transition">V</button>
+                            <button id="btn-f-${index}" onclick="seleccionarRespuesta(${index}, false)" class="w-12 h-12 rounded-lg font-bold border-2 border-gray-300 text-gray-500 hover:bg-gray-200 transition">F</button>
+                        </div>
+                    </div>
+                `;
+                contenedor.innerHTML += itemHTML;
+            });
+        }
+
+        // Función que registra la opción tocada por el usuario
+        function seleccionarRespuesta(index, esVerdadero) {
+            // Si ya se corrigió, no dejamos cambiar las respuestas
+            if (cuestionarioCorregido) return;
+
+            respuestasUsuario[index] = esVerdadero;
+
+            const btnV = document.getElementById(`btn-v-${index}`);
+            const btnF = document.getElementById(`btn-f-${index}`);
+
+            // Resetear estilos de ambos botones en esa fila
+            btnV.className = "w-12 h-12 rounded-lg font-bold border-2 border-gray-300 text-gray-500 hover:bg-gray-200 transition";
+            btnF.className = "w-12 h-12 rounded-lg font-bold border-2 border-gray-300 text-gray-500 hover:bg-gray-200 transition";
+
+            // Aplicar estilo al seleccionado
+            if (esVerdadero) {
+                btnV.classList.add('btn-seleccionado-v');
+            } else {
+                btnF.classList.add('btn-seleccionado-f');
+            }
+        }
+
+        // Función principal del botón (Evaluar -> Transformarse -> Redirigir)
+        function comprobarCuestionario() {
+            const btnAccion = document.getElementById('btn-accion');
+            
+            // Si el cuestionario ya fue evaluado, el botón ahora sirve para ir a la siguiente página
+            if (cuestionarioCorregido) {
+                window.location.href = 'introarana.html';
+                return;
+            }
+
+            // Validar que respondió las 15 preguntas
+            if (respuestasUsuario.includes(null)) {
+                alert("⚠️ Por favor, responde las 15 premisas antes de comprobar.");
+                return;
+            }
+
+            // Evaluar resultados
+            let aciertos = 0;
+            
+            premisas.forEach((premisa, index) => {
+                const respondioCorrecto = (respuestasUsuario[index] === premisa.correcta);
+                const btnV = document.getElementById(`btn-v-${index}`);
+                const btnF = document.getElementById(`btn-f-${index}`);
+                
+                // Quitamos el azul de selección
+                btnV.classList.remove('btn-seleccionado-v');
+                btnF.classList.remove('btn-seleccionado-f');
+
+                if (respondioCorrecto) {
+                    aciertos++;
+                    // Pintar de verde el que tocó
+                    if(respuestasUsuario[index] === true) btnV.classList.add('correcto');
+                    else btnF.classList.add('correcto');
+                } else {
+                    // Pintar de rojo el que tocó mal, y verde el que era correcto
+                    if(respuestasUsuario[index] === true) {
+                        btnV.classList.add('incorrecto');
+                        btnF.classList.add('correcto');
+                    } else {
+                        btnF.classList.add('incorrecto');
+                        btnV.classList.add('correcto');
+                    }
+                }
+            });
+
+            // Mostrar el mensaje de resultado
+            const cajaResultado = document.getElementById('mensaje-resultado');
+            cajaResultado.classList.remove('hidden');
+            
+            if (aciertos === 15) {
+                cajaResultado.innerHTML = `¡Excelencia total! 🏆 Acertaste ${aciertos}/15. Estás listo para el terreno.`;
+                cajaResultado.className = "text-center p-4 mb-6 rounded-xl font-bold text-xl fade-in bg-green-100 text-green-800 border-2 border-green-500";
+            } else if (aciertos >= 10) {
+                cajaResultado.innerHTML = `¡Muy buen trabajo! Acertaste ${aciertos}/15. Revisa en rojo los conceptos que faltan pulir.`;
+                cajaResultado.className = "text-center p-4 mb-6 rounded-xl font-bold text-xl fade-in bg-yellow-100 text-yellow-800 border-2 border-yellow-500";
+            } else {
+                cajaResultado.innerHTML = `Peligro en terreno ⚠️. Solo acertaste ${aciertos}/15. Revisa bien las respuestas correctas marcadas en verde.`;
+                cajaResultado.className = "text-center p-4 mb-6 rounded-xl font-bold text-xl fade-in bg-red-100 text-red-800 border-2 border-red-500";
+            }
+
+            // TRANSFORMACIÓN DEL BOTÓN
+            cuestionarioCorregido = true;
+            btnAccion.innerHTML = "Continuar a Arañas 🕷️";
+            // Cambiar color del botón a verde para indicar que ahora permite avanzar
+            btnAccion.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+            btnAccion.classList.add('bg-green-600', 'hover:bg-green-700');
+            
+            // Scrollear hacia abajo para que el usuario vea el botón nuevo si está en celular
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        // Ejecutar al iniciar
+        window.onload = renderizarPreguntas;
+    </script>
+</body>
+</html>
