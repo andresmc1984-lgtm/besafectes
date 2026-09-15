@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protocolo de Primeros Auxilios | B-SAFE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-slate-100 min-h-screen flex flex-col p-4 md:p-8 font-sans">
+
+    <header class="w-full max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 py-4 border-b border-slate-700/60 mb-6">
+        <div class="flex items-center gap-3">
+            <div class="bg-emerald-500/20 text-emerald-400 p-2.5 rounded-xl border border-emerald-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+            </div>
+            <div>
+                <span class="text-xs uppercase tracking-widest text-emerald-400 font-bold block">Jornada de Prevención</span>
+                <span class="text-2xl font-black tracking-tight text-white">B-SAFE CORRIENTES</span>
+            </div>
+        </div>
+        <div class="bg-slate-800/80 border border-slate-700 px-4 py-1.5 rounded-full text-xs font-semibold text-slate-300 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            ÁREA DE SALUD Y BIENESTAR
+        </div>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center justify-center w-full max-w-4xl mx-auto">
+        
+        <div class="bg-slate-800/80 border border-slate-700/70 p-6 md:p-10 rounded-2xl shadow-2xl w-full backdrop-blur-sm relative overflow-hidden">
+            
+            <div class="mb-6">
+                <div class="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                    <span id="caseNumber">Caso 1 de 4</span>
+                    <span id="scoreText">Aciertos: 0</span>
+                </div>
+                <div class="w-full bg-slate-700 h-2.5 rounded-full overflow-hidden">
+                    <div id="progressBar" class="bg-emerald-500 h-full w-1/4 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <div id="quizScreen">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    Toma de Decisión en Campo
+                </div>
+
+                <h2 id="scenarioTitle" class="text-2xl md:text-3xl font-extrabold text-white mb-6 leading-snug">
+                    </h2>
+
+                <div id="optionsContainer" class="space-y-4 mb-6">
+                    </div>
+
+                <div id="feedbackBox" class="hidden p-5 rounded-xl border mb-6 text-sm md:text-base transition-all duration-300">
+                    </div>
+
+                <div class="flex justify-end">
+                    <button id="nextCaseBtn" onclick="nextCase()" class="hidden items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-6 py-3 rounded-xl transition-all shadow-md">
+                        <span>Siguiente Caso</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div id="resultScreen" class="hidden text-center py-6">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-500/20 text-emerald-400 border-2 border-emerald-500/40 mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+
+                <h2 class="text-3xl font-extrabold text-white mb-2">¡Entrenamiento de Primeros Auxilios Completado!</h2>
+                <p id="finalFeedback" class="text-slate-300 text-lg max-w-xl mx-auto mb-8"></p>
+
+                <a href="animalfinal.html"
+                   class="inline-flex items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-lg px-8 py-4 rounded-xl shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transform hover:-translate-y-0.5 transition-all duration-200">
+                    <span>Completar Módulo: Ver Resumen Final</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="w-full max-w-5xl mx-auto py-6 mt-6 border-t border-slate-800 text-center text-xs text-slate-500">
+        B-SAFE Corrientes &bull; Salud Ocupacional y Prevención de Riesgos en Telecomunicaciones
+    </footer>
+
+    <script>
+        const cases = [
+            {
+                scenario: "Un compañero es picado en el antebrazo mientras manipulaba una caja terminal exterior. ¿Cuál es la primera acción correcta?",
+                options: [
+                    { 
+                        text: "Retiro rápido de reloj y anillos, lavado con agua y jabón, inmovilización del brazo y traslado urgente al centro de salud.", 
+                        correct: true, 
+                        feedback: "¡Excelente! Retirar accesorios evita el efecto torniquete por el edema (hinchazón) posterior. Inmovilizar frena la circulación del veneno." 
+                    },
+                    { 
+                        text: "Realizar un corte en cruz con la trincheta sobre los orificios para succionar el veneno con la boca.", 
+                        correct: false, 
+                        feedback: "¡Peligro! Cortar daña tendones y vasos sanguíneos, aumenta el riesgo de infección y la succión no retira el veneno." 
+                    },
+                    { 
+                        text: "Apretar un torniquete con precintos o cables en el brazo para que el veneno no suba al corazón.", 
+                        correct: false, 
+                        feedback: "¡Contraindicado! Los torniquetes cortan la irrigación y concentran el veneno, provocando necrosis masiva y posible amputación." 
+                    }
+                ]
+            },
+            {
+                scenario: "Para controlar el dolor y la inflamación en la zona de la picadura mientras esperan el traslado, ¿qué medida física se debe aplicar?",
+                options: [
+                    { 
+                        text: "Aplicar paños con alcohol o colocar barro para neutralizar las toxinas.", 
+                        correct: false, 
+                        feedback: "¡Nunca colocar barro o sustancias químicas! Provocan infecciones bacterianas graves sobre la herida abierta." 
+                    },
+                    { 
+                        text: "Aplicar frío local moderado (hielo envuelto en un paño limpio, nunca directo sobre la piel).", 
+                        correct: true, 
+                        feedback: "¡Correcto! El frío local moderado genera vasoconstricción local, alivia el dolor y enlentece la acción destructiva de las enzimas (especialmente en Loxosceles)." 
+                    },
+                    { 
+                        text: "Cauterizar la herida acercando la llama de un encendedor.", 
+                        correct: false, 
+                        feedback: "¡Grave error! El calor destruye el tejido cutáneo, empeora la quemadura y no desactiva el veneno ya inoculado." 
+                    }
+                ]
+            },
+            {
+                scenario: "¿Qué debemos hacer respecto al animal causante de la mordedura?",
+                options: [
+                    { 
+                        text: "Intentar atraparlo con las manos desnudas para llevarlo vivo al hospital.", 
+                        correct: false, 
+                        feedback: "¡Riesgo innecesario! Manipularlo a mano expone a una segunda picadura tanto al accidentado como a su compañero." 
+                    },
+                    { 
+                        text: "Si es seguro y viable, sacarle una fotografía clara con el teléfono o recolectarlo con pinzas en un frasco cerrado.", 
+                        correct: true, 
+                        feedback: "¡Perfecto! Una foto nítida o el ejemplar seguro en un recipiente permite al equipo médico identificar la especie y aplicar el suero específico exacto." 
+                    },
+                    { 
+                        text: "Descartar la búsqueda del animal porque en el hospital no necesitan saber qué especie fue.", 
+                        correct: false, 
+                        feedback: "¡Falso! El antídoto para Loxosceles es completamente distinto al de Viuda Negra o serpientes. Identificarlo ahorra tiempo crítico." 
+                    }
+                ]
+            },
+            {
+                scenario: "Durante el traslado en el móvil hacia el centro asistencial, ¿cómo se debe acompañar a la persona afectada?",
+                options: [
+                    { 
+                        text: "Darle una taza de café caliente o una bebida con alcohol para calmar los nervios.", 
+                        correct: false, 
+                        feedback: "¡No suministrar estimulantes ni alcohol! Aceleran la frecuencia cardíaca y la vasodilatación, facilitando la propagación del veneno." 
+                    },
+                    { 
+                        text: "Mantener a la persona en reposo absoluto, en posición cómoda, tranquila e hidratada solo con sorbos de agua.", 
+                        correct: true, 
+                        feedback: "¡Conducta impecable! La calma y el reposo disminuyen la actividad muscular y el pulso, retardando la absorción sistémica de las toxinas." 
+                    },
+                    { 
+                        text: "Hacerlo caminar o trotar para que transpire y elimine la toxina más rápido.", 
+                        correct: false, 
+                        feedback: "¡Muy peligroso! El ejercicio físico aumenta la perfusión sanguínea y dispersa el veneno a órganos vitales con mayor velocidad." 
+                    }
+                ]
+            }
+        ];
+
+        let currentCase = 0;
+        let score = 0;
+        let answered = false;
+
+        function loadCase() {
+            answered = false;
+            const q = cases[currentCase];
+
+            document.getElementById('caseNumber').innerText = `Caso ${currentCase + 1} de ${cases.length}`;
+            document.getElementById('progressBar').style.width = `${((currentCase + 1) / cases.length) * 100}%`;
+            document.getElementById('scenarioTitle').innerText = q.scenario;
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = "hidden";
+            feedbackBox.innerHTML = "";
+
+            const nextBtn = document.getElementById('nextCaseBtn');
+            nextBtn.classList.add('hidden');
+            nextBtn.classList.remove('inline-flex');
+
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = "";
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 md:p-5 rounded-xl border border-slate-700 bg-slate-900/60 hover:bg-slate-700/60 hover:border-slate-500 text-slate-200 transition-all flex items-start gap-4 cursor-pointer text-sm md:text-base leading-relaxed";
+                btn.id = `opt-${idx}`;
+                btn.innerHTML = `
+                    <span class="w-8 h-8 shrink-0 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-bold text-emerald-400">${String.fromCharCode(65 + idx)}</span>
+                    <span class="pt-0.5">${opt.text}</span>
+                `;
+                btn.onclick = () => selectOption(idx, opt.correct, opt.feedback);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectOption(selectedIndex, isCorrect, feedbackText) {
+            if (answered) return;
+            answered = true;
+
+            const currentOptions = cases[currentCase].options;
+
+            // Deshabilitar todos los botones y marcar acierto/error
+            currentOptions.forEach((opt, idx) => {
+                const btn = document.getElementById(`opt-${idx}`);
+                btn.onclick = null;
+                btn.classList.remove('hover:bg-slate-700/60', 'hover:border-slate-500', 'cursor-pointer');
+
+                if (idx === selectedIndex) {
+                    if (isCorrect) {
+                        btn.className += " border-emerald-500 bg-emerald-950/50 text-emerald-200";
+                        score++;
+                        document.getElementById('scoreText').innerText = `Aciertos: ${score}`;
+                    } else {
+                        btn.className += " border-red-500 bg-red-950/50 text-red-200";
+                    }
+                } else if (opt.correct) {
+                    btn.className += " border-emerald-500/70 bg-emerald-950/30 text-slate-300";
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            // Mostrar el cuadro de explicación
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.classList.remove('hidden');
+            if (isCorrect) {
+                feedbackBox.className = "p-5 rounded-xl border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 mb-6";
+                feedbackBox.innerHTML = `<strong>Acción Segura:</strong> ${feedbackText}`;
+            } else {
+                feedbackBox.className = "p-5 rounded-xl border border-red-500/40 bg-red-950/40 text-red-300 mb-6";
+                feedbackBox.innerHTML = `<strong>Atención a los Mitos:</strong> ${feedbackText}`;
+            }
+
+            // Mostrar botón siguiente
+            const nextBtn = document.getElementById('nextCaseBtn');
+            nextBtn.classList.remove('hidden');
+            nextBtn.classList.add('inline-flex');
+        }
+
+        function nextCase() {
+            currentCase++;
+            if (currentCase < cases.length) {
+                loadCase();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quizScreen').classList.add('hidden');
+            const resultScreen = document.getElementById('resultScreen');
+            resultScreen.classList.remove('hidden');
+
+            const feedback = document.getElementById('finalFeedback');
+            if (score === 4) {
+                feedback.innerHTML = `Resolviste correctamente <strong>${score} de 4 casos</strong>. Tienes los protocolos de primeros auxilios completamente claros para proteger al equipo en terreno.`;
+            } else {
+                feedback.innerHTML = `Completaste el entrenamiento con <strong>${score} de 4 aciertos</strong>. Recuerda siempre priorizar el retiro de alhajas, el frío local y el traslado rápido sin maniobras invasivas.`;
+            }
+        }
+
+        // Iniciar
+        loadCase();
+    </script>
+
+</body>
+</html>
