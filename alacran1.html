@@ -3,21 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>B-SAFE - Clasificación de Alacranes</title>
+    <title>B-SAFE - Clasificación de Alacranes (Modo Difícil)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Estilos para el drag and drop */
         .ficha-arrastrable {
             cursor: grab;
         }
         .ficha-arrastrable:active {
             cursor: grabbing;
         }
-        /* Resaltar la zona cuando pasamos por encima con una ficha */
         .zona-activa {
-            background-color: rgba(59, 130, 246, 0.1); /* Fondo azul claro */
+            background-color: rgba(59, 130, 246, 0.1); 
         }
-        /* Transiciones suaves */
         .fade-in {
             animation: fadeIn 1s ease-in;
         }
@@ -34,7 +31,7 @@
         <!-- Encabezado -->
         <div class="bg-yellow-500 text-white p-4 text-center">
             <h1 class="text-2xl font-bold">🦂 Módulo 2: Clasifica al Enemigo</h1>
-            <p class="text-sm font-medium">Arrastra las características a la columna correspondiente.</p>
+            <p class="text-sm font-medium">¡Atención! Hay características que son mitos o pistas falsas. Déjalas en el banco.</p>
         </div>
 
         <div class="p-4 md:p-6 text-center">
@@ -45,10 +42,10 @@
                 <img src="alacran1.jfif" alt="Diferencias Alacranes" class="max-h-80 rounded-lg shadow-lg border-4 border-green-500">
             </div>
 
-            <!-- Banco de características (Zona inicial de Drag & Drop) -->
-            <p id="instruccion" class="mb-4 text-gray-700 font-medium">Toma las fichas de aquí y suéltalas en las cajas de abajo:</p>
+            <!-- Banco de características -->
+            <p id="instruccion" class="mb-4 text-gray-700 font-medium">Arrastra solo las características reales a su columna. Deja los MITOS aquí:</p>
             
-            <div id="banco-caracteristicas" class="flex flex-wrap justify-center gap-3 mb-8 min-h-[100px] p-4 bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl" ondrop="soltar(event)" ondragover="permitirSoltar(event)">
+            <div id="banco-caracteristicas" class="flex flex-wrap justify-center gap-3 mb-8 min-h-[120px] p-4 bg-gray-50 border-2 border-dashed border-gray-400 rounded-xl transition-colors" data-columna="banco" ondrop="soltar(event)" ondragover="permitirSoltar(event)" ondragleave="quitarResaltado(event)">
                 <!-- Las fichas se inyectan aquí con JS -->
             </div>
 
@@ -58,17 +55,13 @@
                 <!-- Columna: NO PELIGROSO -->
                 <div id="columna-no-peligroso" data-columna="no-peligroso" class="border-4 border-dashed border-green-300 rounded-xl p-4 min-h-[300px] flex flex-col bg-green-50/30 transition-colors" ondrop="soltar(event)" ondragover="permitirSoltar(event)" ondragleave="quitarResaltado(event)">
                     <h2 class="text-xl font-bold text-green-700 mb-4 border-b-2 border-green-200 pb-2 w-full text-center pointer-events-none">🟢 NO PELIGROSO</h2>
-                    <div class="contenedor-fichas flex flex-col gap-2 flex-grow pointer-events-none">
-                        <!-- Las fichas caen aquí -->
-                    </div>
+                    <div class="contenedor-fichas flex flex-col gap-2 flex-grow pointer-events-none"></div>
                 </div>
 
                 <!-- Columna: PELIGROSO -->
                 <div id="columna-peligroso" data-columna="peligroso" class="border-4 border-dashed border-red-300 rounded-xl p-4 min-h-[300px] flex flex-col bg-red-50/30 transition-colors" ondrop="soltar(event)" ondragover="permitirSoltar(event)" ondragleave="quitarResaltado(event)">
                     <h2 class="text-xl font-bold text-red-700 mb-4 border-b-2 border-red-200 pb-2 w-full text-center pointer-events-none">🔴 PELIGROSO</h2>
-                    <div class="contenedor-fichas flex flex-col gap-2 flex-grow pointer-events-none">
-                        <!-- Las fichas caen aquí -->
-                    </div>
+                    <div class="contenedor-fichas flex flex-col gap-2 flex-grow pointer-events-none"></div>
                 </div>
 
             </div>
@@ -76,15 +69,15 @@
             <!-- Mensaje de estado -->
             <div id="mensaje-juego" class="mt-6 text-lg font-bold min-h-[2rem]"></div>
 
-            <!-- Botón Comprobar (Oculto hasta que se coloquen todas las fichas) -->
-            <button id="btn-comprobar" onclick="comprobarResultados()" class="hidden mx-auto mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-10 rounded-full shadow-lg transition transform hover:scale-105">
+            <!-- Botón Comprobar (Siempre visible para que prueben cuando quieran) -->
+            <button id="btn-comprobar" onclick="comprobarResultados()" class="mx-auto mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-10 rounded-full shadow-lg transition transform hover:scale-105">
                 Comprobar Respuestas
             </button>
 
             <!-- Botón para avanzar (Oculto al inicio) -->
             <div id="seccion-continuar" class="hidden mt-8 fade-in">
                 <a href="alacran2.html" class="inline-block bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105">
-                    Siguiente Módulo: Arañas 🕷️
+                    Continuar
                 </a>
             </div>
 
@@ -92,7 +85,7 @@
     </main>
 
     <script>
-        // Datos de las fichas
+        // Datos de las fichas (Añadimos pistas falsas tipo="falso")
         const caracteristicas = [
             { id: 'f1', texto: "Pinzas cortas y anchas", tipo: "no-peligroso" },
             { id: 'f2', texto: "Pinzas delgadas y largas", tipo: "peligroso" },
@@ -101,23 +94,23 @@
             { id: 'f5', texto: "Color marrón oscuro a negro", tipo: "no-peligroso" },
             { id: 'f6', texto: "Color amarillo o marrón claro", tipo: "peligroso" },
             { id: 'f7', texto: "Líneas longitudinales en el dorso", tipo: "peligroso" },
-            { id: 'f8', texto: "Dorso liso del mismo color", tipo: "no-peligroso" }
+            { id: 'f8', texto: "Dorso liso del mismo color", tipo: "no-peligroso" },
+            { id: 'f9', texto: "Tienen antenas largas (Mito)", tipo: "falso" }, // Pista falsa
+            { id: 'f10', texto: "Saltan hacia su presa (Mito)", tipo: "falso" } // Pista falsa
         ];
 
-        // Inicializar el juego
         function iniciarJuego() {
             const banco = document.getElementById('banco-caracteristicas');
-            caracteristicas.sort(() => Math.random() - 0.5); // Mezclar aleatoriamente
+            caracteristicas.sort(() => Math.random() - 0.5); 
 
             caracteristicas.forEach(caract => {
                 const ficha = document.createElement('div');
+                // Estilo neutro, sin colores de acierto o error
                 ficha.className = "ficha-arrastrable bg-white border-2 border-gray-300 rounded-lg p-3 shadow-sm text-sm font-semibold text-gray-700 hover:border-blue-400 hover:shadow-md transition-all text-center flex-grow sm:flex-grow-0 min-w-[140px]";
                 ficha.textContent = caract.texto;
                 ficha.id = caract.id;
                 ficha.dataset.tipo = caract.tipo;
                 ficha.draggable = true;
-                
-                // Evento para iniciar el arrastre
                 ficha.ondragstart = arrastrar;
                 
                 banco.appendChild(ficha);
@@ -127,10 +120,7 @@
         // --- FUNCIONES DE DRAG AND DROP ---
         function permitirSoltar(ev) {
             ev.preventDefault();
-            // Resaltar la columna al pasar por encima
-            if(ev.currentTarget.id !== 'banco-caracteristicas') {
-                ev.currentTarget.classList.add('zona-activa');
-            }
+            ev.currentTarget.classList.add('zona-activa');
         }
 
         function quitarResaltado(ev) {
@@ -139,8 +129,9 @@
 
         function arrastrar(ev) {
             ev.dataTransfer.setData("text", ev.target.id);
-            // Efecto visual leve mientras se arrastra
             ev.target.style.opacity = "0.5";
+            // Limpiamos el mensaje de error si empiezan a mover fichas de nuevo
+            document.getElementById('mensaje-juego').textContent = "";
         }
 
         function soltar(ev) {
@@ -149,64 +140,45 @@
             
             const data = ev.dataTransfer.getData("text");
             const fichaElemento = document.getElementById(data);
-            fichaElemento.style.opacity = "1"; // Restaurar opacidad
-            
-            // Limpiar colores previos si el usuario re-arrastra una ficha
-            fichaElemento.classList.remove('bg-red-100', 'border-red-500', 'bg-green-100', 'border-green-500');
-            fichaElemento.classList.add('bg-white', 'border-gray-300');
+            fichaElemento.style.opacity = "1"; 
 
-            // Determinar dónde se soltó (si en el banco o en una columna)
+            // Si se suelta en el banco principal
             if (ev.currentTarget.id === 'banco-caracteristicas') {
                 ev.currentTarget.appendChild(fichaElemento);
             } else {
-                // Soltado en una columna: buscar el contenedor interno de fichas
+                // Si se suelta en una de las columnas
                 const contenedorDestino = ev.currentTarget.querySelector('.contenedor-fichas');
-                contenedorDestino.appendChild(fichaElemento);
-            }
-
-            evaluarProgreso();
-        }
-
-        // --- LÓGICA DE VALIDACIÓN ---
-        function evaluarProgreso() {
-            const banco = document.getElementById('banco-caracteristicas');
-            const btnComprobar = document.getElementById('btn-comprobar');
-            
-            // Si el banco está vacío (todas las fichas están en las columnas), mostrar botón
-            if (banco.children.length === 0) {
-                btnComprobar.classList.remove('hidden');
-            } else {
-                btnComprobar.classList.add('hidden');
-                document.getElementById('mensaje-juego').textContent = ""; // Limpiar mensaje si devuelven fichas al banco
+                if (contenedorDestino) {
+                    contenedorDestino.appendChild(fichaElemento);
+                }
             }
         }
 
+        // --- LÓGICA DE VALIDACIÓN (Modo Difícil) ---
         function comprobarResultados() {
             let todosCorrectos = true;
-            let errores = 0;
-
-            // Revisamos todas las fichas que están fuera del banco
             const todasLasFichas = document.querySelectorAll('.ficha-arrastrable');
             
             todasLasFichas.forEach(ficha => {
-                // Saber en qué columna está actualmente
-                const columnaPadre = ficha.closest('[data-columna]');
+                const tipoCorrecto = ficha.dataset.tipo;
+                const contenedorPadre = ficha.parentElement;
                 
-                if (columnaPadre) {
-                    const columnaActual = columnaPadre.dataset.columna;
-                    const tipoCorrecto = ficha.dataset.tipo;
+                // Determinamos en qué zona está la ficha evaluando a su "abuelo" o padre directo
+                let zonaActual = "banco";
+                if (contenedorPadre.classList.contains('contenedor-fichas')) {
+                    zonaActual = contenedorPadre.parentElement.dataset.columna;
+                }
 
-                    // Remover estilos previos
-                    ficha.classList.remove('bg-white', 'border-gray-300', 'bg-red-100', 'border-red-500', 'bg-green-100', 'border-green-500');
-
-                    if (columnaActual === tipoCorrecto) {
-                        // Acierto visual
-                        ficha.classList.add('bg-green-100', 'border-green-500');
-                    } else {
-                        // Error visual
-                        ficha.classList.add('bg-red-100', 'border-red-500');
+                // Evaluamos si está en el lugar correcto
+                if (tipoCorrecto === "falso") {
+                    // Las pistas falsas DEBEN quedarse en el banco
+                    if (zonaActual !== "banco") {
                         todosCorrectos = false;
-                        errores++;
+                    }
+                } else {
+                    // Las verdaderas DEBEN estar en su columna correspondiente
+                    if (zonaActual !== tipoCorrecto) {
+                        todosCorrectos = false;
                     }
                 }
             });
@@ -215,33 +187,29 @@
 
             if (todosCorrectos) {
                 // GANÓ EL JUEGO
-                mensajeDiv.textContent = "¡Excelente deducción! Clasificación 100% correcta.";
+                mensajeDiv.textContent = "¡Excelente deducción! Esquivaste las trampas y clasificaste todo perfecto.";
                 mensajeDiv.className = "mt-6 text-xl font-bold text-green-600";
                 
-                // Ocultar botón comprobar y banco (ya no se usan)
                 document.getElementById('btn-comprobar').classList.add('hidden');
                 document.getElementById('banco-caracteristicas').classList.add('hidden');
                 document.getElementById('instruccion').classList.add('hidden');
 
-                // Mostrar recompensa e instrucciones siguientes
                 document.getElementById('contenedor-imagen').classList.remove('hidden');
                 document.getElementById('seccion-continuar').classList.remove('hidden');
                 
-                // Bloquear las fichas para que no se muevan más
                 todasLasFichas.forEach(f => {
                     f.draggable = false;
-                    f.classList.remove('ficha-arrastrable');
-                    f.classList.add('cursor-default');
+                    f.classList.remove('ficha-arrastrable', 'hover:border-blue-400');
+                    f.classList.add('cursor-default', 'bg-green-50', 'border-green-300'); // Pintamos todo de verde solo al ganar
                 });
                 
             } else {
-                // SE EQUIVOCÓ EN ALGUNAS
-                mensajeDiv.textContent = `Tienes ${errores} error(es). Las fichas en rojo están en la columna equivocada. Arrástralas para corregirlo.`;
-                mensajeDiv.className = "mt-6 text-lg font-bold text-red-600";
+                // ERROR: Mensaje genérico, sin pintar colores
+                mensajeDiv.textContent = "❌ Algo no está bien. Vuelve a intentar y trata de acomodar de nuevo. Recuerda que hay pistas falsas.";
+                mensajeDiv.className = "mt-6 text-lg font-bold text-red-600 fade-in";
             }
         }
 
-        // Arrancar el juego al cargar
         window.onload = iniciarJuego;
     </script>
 </body>
