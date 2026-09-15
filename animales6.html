@@ -3,140 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>B-SAFE - Checklist de Prevención</title>
+    <title>B-SAFE - Simulador de Decisiones</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Transición suave para cuando marcan la opción */
-        .tarjeta-check { transition: all 0.3s ease; }
-        /* Aumentamos el tamaño del checkbox para que sea fácil de tocar en celulares */
-        input[type="checkbox"] { width: 1.5rem; height: 1.5rem; accent-color: #16a34a; }
-    </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans pb-10">
+<body class="bg-gray-800 text-white font-sans min-h-screen flex items-center justify-center p-4">
 
-    <main class="max-w-3xl mx-auto p-4 md:p-6 mt-6">
+    <main class="w-full max-w-lg bg-white text-gray-800 rounded-2xl shadow-2xl overflow-hidden">
         
-        <h1 class="text-2xl md:text-3xl font-bold text-center text-blue-800 mb-2">📋 Checklist de Trabajo Seguro</h1>
-        <p class="text-center text-gray-600 mb-6">
-            Confirma las medidas preventivas en terreno para habilitar el siguiente módulo.
-        </p>
-
-        <!-- Barra de Progreso -->
-        <div class="w-full bg-gray-300 rounded-full h-4 mb-6 shadow-inner">
-            <div id="barra-progreso" class="bg-green-500 h-4 rounded-full" style="width: 0%; transition: width 0.5s ease;"></div>
+        <!-- Encabezado -->
+        <div class="bg-red-600 text-white p-4 text-center">
+            <h1 class="text-2xl font-bold">🚨 Simulador B-SAFE</h1>
+            <p class="text-sm opacity-90">Decisiones de vida o muerte en terreno</p>
         </div>
-        <p class="text-right text-sm font-bold text-gray-500 mb-6" id="texto-progreso">0% Completado</p>
 
-        <!-- Lista de Verificación -->
-        <div class="space-y-4" id="contenedor-checklist">
+        <div class="p-6">
             
-            <!-- Opción 1 -->
-            <label class="tarjeta-check flex items-start p-4 bg-white border-2 border-gray-200 rounded-xl shadow-sm cursor-pointer">
-                <input type="checkbox" class="checklist-item mt-1 rounded">
-                <div class="ml-4">
-                    <span class="block font-bold text-lg">🥾 Uso de EPP</span>
-                    <span class="text-gray-600 text-sm">Uso calzado de seguridad cerrado y pantalón largo para transitar en domicilios o pastizales.</span>
+            <!-- Contador de nivel -->
+            <div class="flex justify-between items-center mb-4 text-sm font-bold text-gray-500">
+                <span id="nivel-texto">Situación 1 de 3</span>
+                <div class="flex space-x-1" id="indicadores">
+                    <div class="w-3 h-3 rounded-full bg-red-600"></div>
+                    <div class="w-3 h-3 rounded-full bg-gray-300"></div>
+                    <div class="w-3 h-3 rounded-full bg-gray-300"></div>
                 </div>
-            </label>
+            </div>
 
-            <!-- Opción 2 -->
-            <label class="tarjeta-check flex items-start p-4 bg-white border-2 border-gray-200 rounded-xl shadow-sm cursor-pointer">
-                <input type="checkbox" class="checklist-item mt-1 rounded">
-                <div class="ml-4">
-                    <span class="block font-bold text-lg">🔍 Inspección Visual</span>
-                    <span class="text-gray-600 text-sm">Antes de abrir cajas de conexión o mover escombros, reviso bien. Nunca meto la mano a ciegas.</span>
-                </div>
-            </label>
+            <!-- Contenedor del Juego -->
+            <div id="pantalla-juego">
+                <h2 id="pregunta-texto" class="text-xl font-bold mb-6 text-gray-800 leading-tight">
+                    <!-- Aquí va la pregunta generada por JS -->
+                </h2>
 
-            <!-- Opción 3 -->
-            <label class="tarjeta-check flex items-start p-4 bg-white border-2 border-gray-200 rounded-xl shadow-sm cursor-pointer">
-                <input type="checkbox" class="checklist-item mt-1 rounded">
-                <div class="ml-4">
-                    <span class="block font-bold text-lg">📏 Distancia de Seguridad</span>
-                    <span class="text-gray-600 text-sm">Si veo una serpiente, mantengo al menos 2 metros de distancia y retrocedo lentamente.</span>
+                <div class="space-y-3">
+                    <button id="btn-opcion1" onclick="evaluarRespuesta(1)" class="w-full text-left p-4 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition duration-200 font-medium text-gray-700">
+                        <!-- Opción 1 -->
+                    </button>
+                    
+                    <button id="btn-opcion2" onclick="evaluarRespuesta(2)" class="w-full text-left p-4 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition duration-200 font-medium text-gray-700">
+                        <!-- Opción 2 -->
+                    </button>
                 </div>
-            </label>
+            </div>
 
-            <!-- Opción 4 -->
-            <label class="tarjeta-check flex items-start p-4 bg-white border-2 border-gray-200 rounded-xl shadow-sm cursor-pointer">
-                <input type="checkbox" class="checklist-item mt-1 rounded">
-                <div class="ml-4">
-                    <span class="block font-bold text-lg">🚫 Cero Manipulación</span>
-                    <span class="text-gray-600 text-sm">Bajo ningún motivo intento acorralar, capturar o matar a la víbora. Aviso al cliente y supervisor.</span>
-                </div>
-            </label>
+            <!-- Pantalla de Feedback (Oculta) -->
+            <div id="pantalla-feedback" class="hidden text-center py-4">
+                <div id="icono-feedback" class="text-6xl mb-4"></div>
+                <h2 id="titulo-feedback" class="text-2xl font-bold mb-2"></h2>
+                <p id="texto-feedback" class="text-gray-600 mb-6"></p>
+                <button id="btn-continuar" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-lg">
+                    Continuar
+                </button>
+            </div>
 
-            <!-- Opción 5 -->
-            <label class="tarjeta-check flex items-start p-4 bg-white border-2 border-gray-200 rounded-xl shadow-sm cursor-pointer">
-                <input type="checkbox" class="checklist-item mt-1 rounded">
-                <div class="ml-4">
-                    <span class="block font-bold text-lg">💍 Liberar la Zona (Emergencia)</span>
-                    <span class="text-gray-600 text-sm">Si ocurre una mordedura, lo primero que hago es quitar anillos, relojes o pulseras antes de que se inflame.</span>
-                </div>
-            </label>
+            <!-- Pantalla Final (Oculta) -->
+            <div id="pantalla-final" class="hidden text-center py-6">
+                <div class="text-6xl mb-4">🏆</div>
+                <h2 class="text-2xl font-bold text-green-600 mb-2">¡Técnico Seguro!</h2>
+                <p class="text-gray-600 mb-6">Sabes cómo manejarte en el terreno para evitar accidentes con víboras.</p>
+                <a href="alacranes1.html" class="block w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-4 rounded-xl transition shadow-lg text-lg">
+                    Pasar al módulo Alacranes 🦂
+                </a>
+            </div>
 
         </div>
-
-        <!-- Botón de Siguiente (Oculto al inicio) -->
-        <div id="seccion-continuar" class="hidden mt-10 text-center opacity-0 transition-opacity duration-500">
-            <h2 class="text-xl font-bold text-green-600 mb-4">¡Excelente! Estás listo para el terreno.</h2>
-            <!-- AQUÍ PONES EL ENLACE A LA PÁGINA DE ALACRANES -->
-            <a href="alacranes1.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition">
-                Siguiente Módulo: Alacranes 🦂
-            </a>
-        </div>
-
     </main>
 
     <script>
-        const checkboxes = document.querySelectorAll('.checklist-item');
-        const barraProgreso = document.getElementById('barra-progreso');
-        const textoProgreso = document.getElementById('texto-progreso');
-        const seccionContinuar = document.getElementById('seccion-continuar');
-        const totalItems = checkboxes.length;
+        // La base de datos de nuestro juego (Tus recomendaciones camufladas en escenarios)
+        const escenarios = [
+            {
+                pregunta: "Llegas al domicilio y debes revisar una cámara subterránea que está llena de hojas secas y basura. ¿Qué haces?",
+                opcion1: "Me pongo mis guantes de vaqueta e introduzco las manos para despejar la zona rápidamente.",
+                opcion2: "Uso un destornillador largo o vara para remover las hojas y observo bien antes de meter la mano.",
+                correcta: 2,
+                explicacionPositiva: "¡Correcto! Nunca metes las manos a ciegas. La inspección visual y el uso de herramientas son tu mejor defensa.",
+                explicacionNegativa: "¡Peligro! Los guantes ayudan, pero si hay una yarará escondida, un ataque sorpresivo puede perforarlos o darte en el antebrazo. Nunca a ciegas."
+            },
+            {
+                pregunta: "Mientras tiras fibra por una pared exterior, ves una serpiente Yarará descansando sobre los ladrillos a 2 metros tuyos.",
+                opcion1: "Mantengo la distancia de 2 metros, retrocedo lentamente y le aviso al cliente y a mi supervisor.",
+                opcion2: "Intento asustarla tirándole piedras o capturarla con un palo para proteger al cliente.",
+                correcta: 1,
+                explicacionPositiva: "¡Excelente! Las víboras no atacan si no se sienten amenazadas. Alejarse y avisar es el protocolo correcto.",
+                explicacionNegativa: "¡Error grave! La mayoría de los accidentes ocurren cuando alguien intenta matar o capturar a la serpiente. Mantén la distancia."
+            },
+            {
+                pregunta: "¡Emergencia! Un compañero pisó una serpiente por accidente y fue mordido en la mano.",
+                opcion1: "Le quito rápido el reloj y anillos, le lavo con agua, inmovilizo el brazo y lo llevo urgente al hospital.",
+                opcion2: "Le hago un torniquete en el brazo con un cable de red y trato de succionar el veneno para ayudarlo.",
+                correcta: 1,
+                explicacionPositiva: "¡Perfecto! Liberar la zona antes de que se inflame y lavar es lo único que debes hacer antes de ir al hospital.",
+                explicacionNegativa: "¡Mito mortal! El torniquete concentra el veneno causando necrosis (puede perder el brazo) y succionar te pone en riesgo a ti."
+            }
+        ];
 
-        checkboxes.forEach(box => {
-            box.addEventListener('change', function() {
-                // Seleccionamos el label contenedor para cambiarle el color
-                const tarjeta = this.closest('.tarjeta-check');
-                
-                if (this.checked) {
-                    tarjeta.classList.add('bg-green-50', 'border-green-400');
-                    tarjeta.classList.remove('bg-white', 'border-gray-200');
-                } else {
-                    tarjeta.classList.remove('bg-green-50', 'border-green-400');
-                    tarjeta.classList.add('bg-white', 'border-gray-200');
-                }
+        let pasoActual = 0;
 
-                actualizarProgreso();
-            });
-        });
+        // Referencias al DOM
+        const pantallaJuego = document.getElementById('pantalla-juego');
+        const pantallaFeedback = document.getElementById('pantalla-feedback');
+        const pantallaFinal = document.getElementById('pantalla-final');
+        const preguntaTexto = document.getElementById('pregunta-texto');
+        const btnOpcion1 = document.getElementById('btn-opcion1');
+        const btnOpcion2 = document.getElementById('btn-opcion2');
+        const indicadores = document.getElementById('indicadores').children;
+        const nivelTexto = document.getElementById('nivel-texto');
 
-        function actualizarProgreso() {
-            // Contamos cuántos están marcados
-            const marcados = document.querySelectorAll('.checklist-item:checked').length;
+        // Función para cargar el escenario
+        function cargarEscenario() {
+            pantallaFeedback.classList.add('hidden');
+            pantallaJuego.classList.remove('hidden');
             
-            // Calculamos el porcentaje
-            const porcentaje = Math.round((marcados / totalItems) * 100);
+            const escenario = escenarios[pasoActual];
+            preguntaTexto.textContent = escenario.pregunta;
+            btnOpcion1.textContent = "A) " + escenario.opcion1;
+            btnOpcion2.textContent = "B) " + escenario.opcion2;
             
-            // Actualizamos la barra visual y el texto
-            barraProgreso.style.width = porcentaje + '%';
-            textoProgreso.textContent = porcentaje + '% Completado';
-
-            // Si llegamos al 100%, mostramos el botón de continuar
-            if (marcados === totalItems) {
-                seccionContinuar.classList.remove('hidden');
-                // Un pequeño delay para que la animación de aparición (fade-in) funcione
-                setTimeout(() => {
-                    seccionContinuar.classList.remove('opacity-0');
-                }, 100);
-            } else {
-                seccionContinuar.classList.add('opacity-0');
-                setTimeout(() => {
-                    seccionContinuar.classList.add('hidden');
-                }, 500); // Espera a que termine la transición de opacidad para ocultarlo
+            nivelTexto.textContent = `Situación ${pasoActual + 1} de ${escenarios.length}`;
+            
+            // Actualizar indicadores visuales (los puntitos)
+            for (let i = 0; i < indicadores.length; i++) {
+                indicadores[i].className = i === pasoActual ? 'w-3 h-3 rounded-full bg-red-600' : 'w-3 h-3 rounded-full bg-gray-300';
             }
         }
+
+        // Función cuando el usuario hace clic en un botón
+        function evaluarRespuesta(elegida) {
+            const escenario = escenarios[pasoActual];
+            const esCorrecta = (elegida === escenario.correcta);
+
+            pantallaJuego.classList.add('hidden');
+            pantallaFeedback.classList.remove('hidden');
+
+            const icono = document.getElementById('icono-feedback');
+            const titulo = document.getElementById('titulo-feedback');
+            const texto = document.getElementById('texto-feedback');
+            const btnContinuar = document.getElementById('btn-continuar');
+
+            if (esCorrecta) {
+                icono.textContent = "✅";
+                titulo.textContent = "¡Bien hecho!";
+                titulo.className = "text-2xl font-bold mb-2 text-green-600";
+                texto.textContent = escenario.explicacionPositiva;
+                
+                // Si acertó, preparamos el botón para avanzar al siguiente nivel
+                btnContinuar.textContent = "Siguiente Situación";
+                btnContinuar.className = "w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-lg";
+                btnContinuar.onclick = avanzarNivel;
+            } else {
+                icono.textContent = "❌";
+                titulo.textContent = "¡Cometiste un error!";
+                titulo.className = "text-2xl font-bold mb-2 text-red-600";
+                texto.textContent = escenario.explicacionNegativa;
+                
+                // Si falló, preparamos el botón para reintentar
+                btnContinuar.textContent = "Reintentar";
+                btnContinuar.className = "w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-lg";
+                btnContinuar.onclick = cargarEscenario; // Vuelve a cargar el mismo nivel
+            }
+        }
+
+        function avanzarNivel() {
+            pasoActual++;
+            if (pasoActual < escenarios.length) {
+                cargarEscenario();
+            } else {
+                // Ganó el juego
+                pantallaFeedback.classList.add('hidden');
+                document.getElementById('nivel-texto').parentElement.classList.add('hidden');
+                pantallaFinal.classList.remove('hidden');
+            }
+        }
+
+        // Iniciar el juego
+        cargarEscenario();
     </script>
 </body>
 </html>
